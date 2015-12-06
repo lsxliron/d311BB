@@ -16,6 +16,13 @@
 	<script type="text/javascript" src="assets/Backbone/underscore.js"></script>
 	<script type="text/javascript" src="assets/Backbone/backbone.js"></script>
 	<script type="text/javascript" src="assets/bootstrap3.6/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="models/Path.js"></script>
+	<script type="text/javascript" src="collections/Map.js"></script>
+	<script type="text/javascript" src="views/MapView.js"></script>
+	<script type="text/javascript" src="models/DataPoint.js"></script>
+	<script type="text/javascript" src="collections/DataPoints.js"></script>
+  <script type="text/javascript" src="views/LegendView.js"></script>
+  <script type="text/javascript" src="views/SplomView.js"></script>
 </head>
 <body>
 
@@ -75,19 +82,80 @@
 
 
 <div class="container-fluid">
-	<div id="legendContainer" class="col-md-1 col-sm-1 col-xs-1">aa
+	<div id="legendContainer" class="col-md-1 col-sm-1 col-xs-2">
 	</div>
 
-	<div id="mapContainer" class="col-md-4 col-sm-5 col-xs-11">aa
+	<div id="mapContainer" class="col-md-4 col-sm-5 col-xs-10">
 	</div>
 
-	<div id="splomContainer" class="col-md-5 col-sm-6 col-xs-12">bb
+	<div id="splomContainer" class="col-md-4 col-sm-6 col-xs-12">
 	</div>
-	
-	<div id="instructionsContainer" class="col-md-2 col-sm-12 col-xs-12">bb
+
+	<div id="instructionsContainer" class="col-md-3 col-sm-12 col-xs-12">bb
 	</div>
 </div>
 
+<script type="text/javascript">
+	var x;
+	var paths
+	var map
+	$(document).ready(function(){
+
+    
+
+
+		//Get paths data
+		paths = [];
+		$.ajax({
+			dataType:'json', 
+			async: false,
+			url:'data/gj.json', 
+			success:function(data){
+				$.each(data['features'], function(i,d){
+					paths.push(new Path(d))
+				});
+			}
+		});
+
+
+		//Initialize Path Collection
+		map = new Map(paths)
+
+    
+    //Initialize data points
+		var dataPoints = new DataPoints();
+    
+
+    var mapViewOptions = {
+      minColor: '#8EA6E8',
+      maxColor: '#F23A46',
+      sortBy: 'All_sa',
+      points: dataPoints.toJSON()
+    };
+
+    var legendViewOptions = {
+      minColor: '#8EA6E8',
+      maxColor: '#F23A46',
+      sortBy: 'All_sa',
+      points: dataPoints.toJSON(),
+      legendWidth: 30
+    };
+
+    var splomViewOptions = {
+      fields: ['All_sa', 'Pop', 'Flow'],
+      points: dataPoints.toJSON()
+    };
+
+
+		mv = new MapView({model: map, options: mapViewOptions})
+		lv = new LegendView({options: legendViewOptions})
+    sv = new SplomView({options: splomViewOptions})
+
+		
+
+
+	})
+</script>
 
 
 
