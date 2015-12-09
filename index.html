@@ -11,18 +11,20 @@
 	<link rel="stylesheet" href="assets/bootstrap3.6/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="assets/styles/styles.css" />
 	
-	<script type="text/javascript" src="assets/jquery/jquery-2.1.4.js"></script>
+	<!--<script type="text/javascript" src="assets/jquery/jquery-2.1.4.js"></script>
 	<script type="text/javascript" src="assets/d3/d3.min.js"></script>
 	<script type="text/javascript" src="assets/Backbone/underscore.js"></script>
 	<script type="text/javascript" src="assets/Backbone/backbone.js"></script>
 	<script type="text/javascript" src="assets/bootstrap3.6/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="app.js"></script>
 	<script type="text/javascript" src="models/Path.js"></script>
 	<script type="text/javascript" src="collections/Map.js"></script>
+  <script type="text/javascript" src="models/DataPoint.js"></script>
+  <script type="text/javascript" src="collections/DataPoints.js"></script>
 	<script type="text/javascript" src="views/MapView.js"></script>
-	<script type="text/javascript" src="models/DataPoint.js"></script>
-	<script type="text/javascript" src="collections/DataPoints.js"></script>
   <script type="text/javascript" src="views/LegendView.js"></script>
-  <script type="text/javascript" src="views/SplomView.js"></script>
+  <script type="text/javascript" src="views/SplomView.js"></script>-->
 </head>
 <body>
 
@@ -80,7 +82,6 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-
 <div class="container-fluid">
 	<div id="legendContainer" class="col-md-1 col-sm-1 col-xs-2">
 	</div>
@@ -96,67 +97,88 @@
 </div>
 
 <script type="text/javascript">
-	var x;
-	var paths
-	var map
-	$(document).ready(function(){
+
+	// var x;
+	// var paths
+	// var map
+	// $(document).ready(function(){
+
+  // this.app = {}
+  // this.app.models = {}
+  // this.app.views = {}
+  // this.app.collections = {}    
+  
+
+		// //Get paths data
+		// paths = [];
+		// $.ajax({
+		// 	dataType:'json', 
+		// 	async: false,
+		// 	url:'data/gj.json', 
+		// 	success:function(data){
+		// 		$.each(data['features'], function(i,d){
+		// 			paths.push(new Path(d))
+		// 		});
+		// 	}
+		// });
+
+
+		// //Initialize Path Collection
+		// map = new Map(paths)
 
     
-
-
-		//Get paths data
-		paths = [];
-		$.ajax({
-			dataType:'json', 
-			async: false,
-			url:'data/gj.json', 
-			success:function(data){
-				$.each(data['features'], function(i,d){
-					paths.push(new Path(d))
-				});
-			}
-		});
-
-
-		//Initialize Path Collection
-		map = new Map(paths)
-
-    
-    //Initialize data points
-		var dataPoints = new DataPoints();
+  //   //Initialize data points
+		// var dataPoints = new DataPoints();
     
 
-    var mapViewOptions = {
-      minColor: '#8EA6E8',
-      maxColor: '#F23A46',
-      sortBy: 'All_sa',
-      points: dataPoints.toJSON()
-    };
+  //   var mapViewOptions = {
+  //     minColor: '#8EA6E8',
+  //     maxColor: '#F23A46',
+  //     sortBy: 'All_sa',
+  //     points: dataPoints.toJSON()
+  //   };
 
-    var legendViewOptions = {
-      minColor: '#8EA6E8',
-      maxColor: '#F23A46',
-      sortBy: 'All_sa',
-      points: dataPoints.toJSON(),
-      legendWidth: 30
-    };
+  //   var legendViewOptions = {
+  //     minColor: '#8EA6E8',
+  //     maxColor: '#F23A46',
+  //     sortBy: 'All_sa',
+  //     points: dataPoints.toJSON(),
+  //     legendWidth: 30
+  //   };
 
-    var splomViewOptions = {
-      fields: ['All_sa', 'Pop', 'Flow'],
-      points: dataPoints.toJSON()
-    };
+  //   var splomViewOptions = {
+  //     fields: ['All_sa', 'Pop', 'Flow'],
+  //     points: dataPoints.toJSON()
+  //   };
 
 
-		mv = new MapView({model: map, options: mapViewOptions})
-		lv = new LegendView({options: legendViewOptions})
-    sv = new SplomView({options: splomViewOptions})
+		// mv = new MapView({model: map, options: mapViewOptions})
+		// lv = new LegendView({options: legendViewOptions})
+  //   sv = new SplomView({options: splomViewOptions})
 
 		
 
 
-	})
+	// })
 </script>
 
+
+  <script type="text/javascript" src="assets/jquery/jquery-2.1.4.js"></script>
+  <script type="text/javascript" src="assets/d3/d3.min.js"></script>
+  <script type="text/javascript" src="assets/Backbone/underscore.js"></script>
+  <script type="text/javascript" src="assets/Backbone/backbone.js"></script>
+  <script type="text/javascript" src="assets/bootstrap3.6/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="namespacer.js"></script>
+  <script type="text/javascript" src="app.js"></script>
+  <script type="text/javascript" src="models/Path.js"></script>
+  <script type="text/javascript" src="collections/Map.js"></script>
+  <script type="text/javascript" src="models/DataPoint.js"></script>
+  <script type="text/javascript" src="collections/DataPoints.js"></script>
+  <script type="text/javascript" src="views/MapView.js"></script>
+  <script type="text/javascript" src="views/LegendView.js"></script>
+  <script type="text/javascript" src="views/SplomView.js"></script>
+  
 
 
 </body>

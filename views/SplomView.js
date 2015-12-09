@@ -1,6 +1,6 @@
-// (function(){
+(function(app){
 
-var SplomView = Backbone.View.extend({
+app.views.SplomView = Backbone.View.extend({
 
 
 	tagName: 'g',
@@ -16,7 +16,8 @@ var SplomView = Backbone.View.extend({
 		this.yNumOfTicks = 4
 		this.xNumOfTicks = 3
 		this.numberFormat = '.1f'
-		this.domainByComplaints = {}
+		this.domainByComplaints = {};
+		this.complaints = [];
 		this.x = d3.scale.linear().range([this.padding/2, this.size - this.padding/2]);
 		this.y = d3.scale.linear().range([this.size - this.padding/2, this.padding/2]);
 		this.xAxis = d3.svg.axis()
@@ -33,7 +34,11 @@ var SplomView = Backbone.View.extend({
 
 		this.svgSplom = d3.select('#splomContainer').append('svg').attr('id','splomSVG')
 		
-			
+		app.vents.on('eve', function(e){console.log("x");console.log(e.mydata)})
+		app.vents.on('pathHovered', this.inflatePoints, this);
+		app.vents.on('pathHoverEnded', this.deflatePoints, this);
+		app.vents.on('pathIsSelected', this.updateSplom, this);
+
 		this.render();
 	},
 
@@ -98,7 +103,7 @@ var SplomView = Backbone.View.extend({
 						  		_this.plotHist(this, d, 10);
 						});
 
-
+		return this;
 	},//END RENDER
 
 
@@ -131,8 +136,14 @@ var SplomView = Backbone.View.extend({
 		    })
 		    .attr('r', _this.pointRadius)
 		    .attr('opacity', 0.5)
-		    .attr('id', function(d){ return 'Pt' + d.BoroCT2010; })
+		    .attr('class', function(d){ return 'Pt' + d.BoroCT2010; })
 		    .attr('visibility', 'visible')
+		    .on('mouseenter', function(d){
+		    	app.vents.trigger('pointHovered', {id:this.classList[0].slice(2)})
+		    })
+		    .on('mouseleave', function(d){
+		    	app.vents.trigger('pointHoverEnded')
+		    })
 	    
 		    // .on('mouseenter', function(d){ _this.magnifyPointMapToSplomIn(d); })
 		    // .on('mouseout', function(d){ _this.magnifyPointMapToSplomOut(d); });
@@ -198,9 +209,92 @@ var SplomView = Backbone.View.extend({
 		return c;
 	},
 
+	inflatePoints: function(e){
+		var pointsClass = '.Pt' + e.id;
+		d3.select('#splomSVG').selectAll(pointsClass).transition().duration(100)
+		.attr('r', 10)
+		.style('fill','#FF0000')
+
+	},
+
+	deflatePoints: function(e){
+		var pointsClass = '.Pt' + e.id;
+		d3.select('#splomSVG').selectAll(pointsClass).transition().duration(100)
+		.attr('r', this.pointRadius)
+		.style('fill', '#565D56')
+	},
+
+	updateSplom: function(e){
+		var _this = this;
+
+		//Get selected path data
+		var selectedPaths = e.selectedPaths;
+		var selectedPathsData = this.points.filter(function(d){
+			if (selectedPaths.indexOf(d.BoroCT2010.toString()) != -1)
+				return d;
+		});
+
+		//Remove all points from SPLOM if only one region is selected
+		if (selectedPathsData.length == 1){
+				d3.selectAll('#splomContainer').selectAll('circle').remove();
+		}
+
+		var cell = d3.selectAll('.cell');
+		var c = cell.data(_this.cross(_this.complaints, _this.complaints)).each(function(p){
+			if (p.i != p.j){
+				//Set axes domains
+				var xDomain = d3.extent(selectedPathsData, function(d){ return d[p.x]; })
+				var yDomain = d3.extent(selectedPathsData, function(d){ return d[p.y]; })
+				
+				if (xDomain[0]==xDomain[1])
+					xDomain[0]=0
+				
+				if (yDomain[0]==yDomain[1])
+					yDomain[0] = 0
+
+				_this.x.domain(xDomain)
+				d3.select('.x.axis').call(_this.xAxis)
+			
+			
+				_this.y.domain(yDomain)				
+				d3.select('.y.axis').call(_this.yAxis)
+
+				// Plot new points
+				d3.select(this).selectAll('circle').data(selectedPathsData)
+				.enter().append('circle')
+				//TODO: Add mouse events
+				// .on('mouseover', function(d){_this.magnifyPointMapToSplom(d)})
+				// .on('mouseenter', function(d){ _this.magnifyPointMapToSplomIn(d); })
+				// .on('mouseout', function(d){ _this.magnifyPointMapToSplomOut(d); })
+				
+				.attr('cx', function(d){ 
+					return _this.x(parseFloat(d[p.x])); 
+				})
+			    .attr('cy', function(d){ 
+			    	return _this.y(parseFloat(d[p.y])); 
+			    })
+			    .attr('r', 0)
+			    .transition().duration(500)
+			    .attr('visibility', 'visible')
+			    .each('end', function(){
+			    	d3.select(this).transition().duration(500)
+    				  .attr('r', 5)
+			          .each('end', function(){
+			    	  		d3.select(this).transition().duration(500)
+			    			  .attr('r', _this.pointRadius) 
+			    	});
+				});
+			}
+		});
+	},
+
+
+
+
+
  
 })//END VIEW
 
 
 
-// })()
+})(this.app)

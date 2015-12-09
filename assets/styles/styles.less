@@ -1,5 +1,6 @@
 @pathFillColor: #00FF00;
 @splomFill: #565D56;
+@selectedPathFill : #3CB371;
 #mapContainer{
 	// height:70%;
 	// padding-right:5px;
@@ -38,6 +39,8 @@
 			opacity: 1;
 			fill:@pathFillColor;
 		}
+
+		&.active{ opacity: 1; fill:@selectedPathFill}
 	}
 
 }

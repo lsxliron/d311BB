@@ -1,7 +1,7 @@
-// (function(){
+(function(app){
 
-	var DataPoints = Backbone.Collection.extend({
-		model: DataPoint,
+	app.collections.DataPoints = Backbone.Collection.extend({
+		model: app.models.DataPoint,
 		url: 'data/Final_Data.json',
 
 		initialize: function(options){
@@ -9,4 +9,4 @@
 			return this;
 		}
 	})
-// })();
+})(this.app);

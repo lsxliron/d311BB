@@ -1,8 +1,13 @@
-// (function(){
+(function(app){
 
-	var DataPoint = Backbone.Model.extend({
+	app.models.DataPoint = Backbone.Model.extend({
+
+	defaults:{},
+	initialize:function(){
+		this.selected=false;
+	}
 
 	})
 	
 	
-// })()
+})(this.app)

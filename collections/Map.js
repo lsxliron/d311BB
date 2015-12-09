@@ -1,7 +1,7 @@
-// (function(){
+(function(app){
 
-var Map = Backbone.Collection.extend({
-	model: Path,
+	app.collections.Map = Backbone.Collection.extend({
+		model: app.models.Path,
 });
 
-// })();
+})(this.app);
