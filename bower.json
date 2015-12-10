@@ -1,0 +1,12 @@
+{
+	"name": "D311",
+	"version": "0.1",
+	"dependencies": {
+		"jquery": null,
+		"backbone": null,
+		"underscore": null,
+		"requirejs": null,
+		"bootstrap": "3.3.6",
+		"d3": "3.5.10"
+	}
+}
