@@ -17,10 +17,10 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			// this.sortBy = 'All_sa'
 			
 			//TODO: Add Ipad and other tablets projections.
-			this.projection = d3.geo.albersUsa().translate([-13700, 3411]).scale(47000); //Desktop
+			// this.projection = d3.geo.albersUsa().translate([-13700, 3411]).scale(47000); //Desktop
 			// this.projection = d3.geo.albers().translate([-11375, 2830]).scale(38900);	//iPhone5
 			// this.projection = d3.geo.albers().translate([-11340, 2820]).scale(38900);	//iPhone6
-			// this.projection = d3.geo.albers().translate([-12215, 3050]).scale(41900);//iPhone6Plus	
+			this.projection = d3.geo.albers().translate([-12215, 3050]).scale(41900);//iPhone6Plus	
 
             this.path = d3.geo.path().projection(this.projection);
 			
@@ -55,6 +55,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			app.vents.on('pathClicked', this.selectPath, this)
 			app.vents.on('pointHovered', this.inflateRegion, this)
 			app.vents.on('pointHoverEnded', this.deflateReagion, this)
+			app.vents.on('parCoorAxisChange', this.recolorMap, this)
 			this.render()
 
 
@@ -68,6 +69,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			d3.select('#mapLayer').selectAll('path').data(_this.model.toJSON())
 			  .enter()
 			  .append('path')
+			  .classed('active', true)
 			  .attr('d', _this.path)
 			  .attr('id', function(d){return 'Pa' + d.properties.BoroCT2010; })
 			  .attr('fill', function(d){
@@ -82,7 +84,6 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 
 			  //Set event listeners
 			  .on('click', function(){
-				  app.vents.trigger('eve',{mydata:"MY_DATA"})//Test event
 				  app.vents.trigger('pathClicked', {id:this.id.slice(2)})
 			  })
 			  .on('mouseenter', function(){
@@ -91,6 +92,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			  .on('mouseleave', function(){
 			  	app.vents.trigger('pathHoverEnded', {id:this.id.slice(2)})
 			  })
+			  .every(function(d){ d.selected = true; })
 
 
 			  return _this;
@@ -143,7 +145,6 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 				    	return d;
 				    })
 
-			// console.log(selectedPaths)
 
 
 			app.vents.trigger('pathIsSelected', {id: e.id ,selectedPaths: selectedPaths})
@@ -201,12 +202,32 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			d3.select('#pathMagnifier').selectAll('path').remove()
 		},
 
+		recolorMap: function(e){
+			var _this = this;
+			var sortByParam = e.axis;
+			var newDomain = d3.extent(_this.points, function(d){return d[sortByParam]});
+			_this.colorPalette.domain(newDomain)
+			
+			d3.select('#mapLayer').selectAll('path')
+			  .attr('fill', function(d){
+			  	var currentPath = _this.points.filter(function(p){
+			  		return d.properties.BoroCT2010 == p.BoroCT2010
+			  	});
+
+			  	if(currentPath[0]) 
+				  	return _this.colorPalette(currentPath[0][sortByParam])
+				else
+					return _this.colorPalette(0);
+		});
+
 
 
 		
 		
 
-	})
+	}
+
+});
 
 	// new MapView({model:new Map()});
 	return MapView;

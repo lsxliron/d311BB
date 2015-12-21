@@ -19,7 +19,7 @@ $selectedPathFill : #3CB371
 
 
 #instructionsContainer
-	background-color: yellow
+	// background-color: yellow
 	// height:70%;
 
 
@@ -42,7 +42,7 @@ $selectedPathFill : #3CB371
 
 		&.active 
 			opacity: 1 
-			fill: $selectedPathFill
+			// fill: $selectedPathFill
 	
 
 
@@ -52,7 +52,7 @@ body
 	background: -o-linear-gradient(lleft top, #ABBAAB, #FFFFFF)  /*For Opera 11.1 to 12.0*/
 	background: -moz-linear-gradient(left top, #ABBAAB, #FFFFFF)  /*For Firefox 3.6 to 15*/
 	background: -webkit-linear-gradient(left top, #ABBAAB, #FFFFFF) /* Standard syntax 8*/
-	overflow: hidden
+	// overflow: hidden
 
 
 .axis
@@ -84,3 +84,25 @@ circle
 		fill: $splomFill
 	text
 		fill: #fff
+
+
+.foreground 
+	path
+		// stroke: steelblue;
+		fill: none
+		opacity: 0.5
+
+
+.background 
+	path
+		fill: none
+		stroke: #ccc
+
+#parCoorSVG
+	.dimension	
+		fill: #000000
+
+
+svg 
+	font: 10px sans-serif
+	padding: 10px

@@ -19,7 +19,9 @@ require(['underscore',
 	     'collections/Map',
 	     'views/MapView',
 	     'views/LegendView',
-	     'views/SplomView'], function(_, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView){
+	     'views/SplomView',
+	     'views/ParCoorView'], 
+	     function(_, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView, ParCoorView){
 
 	window.app = {};
 	app.vents = _.extend({}, Backbone.Events);
@@ -62,11 +64,37 @@ require(['underscore',
 
 	    var splomViewOptions = {
 	      fields: ['All_sa', 'Pop', 'Flow'],
+	      numOfBins: 10,
+	      pointRadius: 2,
+	      yNumOfTicks: 4,
+	      xNumOfTicks: 3,
+	      numberFormat: '.1f',
 	      points: dataPoints.toJSON()
+	    };
+
+	    var parCoorFields = {
+	    	"All_sa":"Sewer Complaints",
+			"All311":"Sewer Comp. N_311.",
+			"All_DEP":"Sewer Comp. N_DEP.",
+			"R":"Rainfall Correlation",
+			"Elevation":"Elevation (ft)",
+			"Slope":"Slope",
+			"Flow":"Flow Accumulation",
+			"Race_White":"White Race (%)",
+			"Race_Black":"African American (%)",
+	    };
+	    var parCoorOptions = {
+	    	fields: parCoorFields,
+	    	width: $('#parCoorContainer').width(),
+	    	height: screen.width * .1,
+	    	minColor: '#8EA6E8',
+	        maxColor: '#F23A46',
+	    	points: dataPoints.toJSON()
 	    };
 
 
 		mv = new MapView({model: map, options: mapViewOptions})
 		lv = new LegendView({options: legendViewOptions})
 	    sv = new SplomView({options: splomViewOptions})
+	    pc = new ParCoorView({options: parCoorOptions})
 })

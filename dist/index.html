@@ -4,27 +4,10 @@
 	<title>D311</title>
 
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="scripts/vendor/bootstrap/dist/css/bootstrap.css" />
 	<link rel="stylesheet" href="scripts/styles/styles.css" />
-	
-	<!--<script type="text/javascript" src="assets/jquery/jquery-2.1.4.js"></script>
-	<script type="text/javascript" src="assets/d3/d3.min.js"></script>
-	<script type="text/javascript" src="assets/Backbone/underscore.js"></script>
-	<script type="text/javascript" src="assets/Backbone/backbone.js"></script>
-	<script type="text/javascript" src="assets/bootstrap3.6/js/bootstrap.min.js"></script>
-
-  <script type="text/javascript" src="app.js"></script>
-	<script type="text/javascript" src="models/Path.js"></script>
-	<script type="text/javascript" src="collections/Map.js"></script>
-  <script type="text/javascript" src="models/DataPoint.js"></script>
-  <script type="text/javascript" src="collections/DataPoints.js"></script>
-	<script type="text/javascript" src="views/MapView.js"></script>
-  <script type="text/javascript" src="views/LegendView.js"></script>
-  <script type="text/javascript" src="views/SplomView.js"></script>-->
 </head>
 <body>
 
@@ -82,9 +65,11 @@
   </div><!-- /.container-fluid -->
 </nav>
 
+
 <div class="container-fluid">
-	<div id="legendContainer" class="col-md-1 col-sm-1 col-xs-2">
-	</div>
+
+  <div id="legendContainer" class="col-md-1 col-sm-1 col-xs-2">
+  </div>
 
 	<div id="mapContainer" class="col-md-4 col-sm-5 col-xs-10">
 	</div>
@@ -92,93 +77,17 @@
 	<div id="splomContainer" class="col-md-4 col-sm-6 col-xs-12">
 	</div>
 
-	<div id="instructionsContainer" class="col-md-3 col-sm-12 col-xs-12">bb
+	<div id="instructionsContainer" class="col-md-3 col-sm-12 col-xs-12">
+  <h1>Instructions</h1>
 	</div>
+
+  <div id="parCoorContainer" class="col-md-12 col-sm-12 col-xs-12">
+  </div>
+
 </div>
 
-<script type="text/javascript">
-
-	// var x;
-	// var paths
-	// var map
-	// $(document).ready(function(){
-
-  // this.app = {}
-  // this.app.models = {}
-  // this.app.views = {}
-  // this.app.collections = {}    
-  
-
-		// //Get paths data
-		// paths = [];
-		// $.ajax({
-		// 	dataType:'json', 
-		// 	async: false,
-		// 	url:'data/gj.json', 
-		// 	success:function(data){
-		// 		$.each(data['features'], function(i,d){
-		// 			paths.push(new Path(d))
-		// 		});
-		// 	}
-		// });
-
-
-		// //Initialize Path Collection
-		// map = new Map(paths)
-
-    
-  //   //Initialize data points
-		// var dataPoints = new DataPoints();
-    
-
-  //   var mapViewOptions = {
-  //     minColor: '#8EA6E8',
-  //     maxColor: '#F23A46',
-  //     sortBy: 'All_sa',
-  //     points: dataPoints.toJSON()
-  //   };
-
-  //   var legendViewOptions = {
-  //     minColor: '#8EA6E8',
-  //     maxColor: '#F23A46',
-  //     sortBy: 'All_sa',
-  //     points: dataPoints.toJSON(),
-  //     legendWidth: 30
-  //   };
-
-  //   var splomViewOptions = {
-  //     fields: ['All_sa', 'Pop', 'Flow'],
-  //     points: dataPoints.toJSON()
-  //   };
-
-
-		// mv = new MapView({model: map, options: mapViewOptions})
-		// lv = new LegendView({options: legendViewOptions})
-  //   sv = new SplomView({options: splomViewOptions})
-
-		
-
-
-	// })
-</script>
-
   <script data-main="scripts/main.js" src="scripts/vendor/requirejs/require.js"></script>
- <!-- <script type="text/javascript" src="assets/jquery/jquery-2.1.4.js"></script>
-  <script type="text/javascript" src="assets/d3/d3.min.js"></script>
-  <script type="text/javascript" src="assets/Backbone/underscore.js"></script>
-  <script type="text/javascript" src="assets/Backbone/backbone.js"></script>
-  <script type="text/javascript" src="assets/bootstrap3.6/js/bootstrap.min.js"></script>
 
-  <script type="text/javascript" src="namespacer.js"></script>
-  <script type="text/javascript" src="app.js"></script>
-  <script type="text/javascript" src="models/Path.js"></script>
-  <script type="text/javascript" src="collections/Map.js"></script>
-  <script type="text/javascript" src="models/DataPoint.js"></script>
-  <script type="text/javascript" src="collections/DataPoints.js"></script>
-  <script type="text/javascript" src="views/MapView.js"></script>
-  <script type="text/javascript" src="views/LegendView.js"></script>
-  <script type="text/javascript" src="views/SplomView.js"></script>-->
-  
 
 
 </body>
