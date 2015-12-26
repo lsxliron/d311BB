@@ -18,7 +18,6 @@ define(['underscore', 'jquery', 'backbone', 'datapoint'], function(_, $, Backbon
 		url: 'data/Final_Data.json',
 		
 		initialize: function(){
-			
 			this.fetch({async: false});
 			return this;
 		}

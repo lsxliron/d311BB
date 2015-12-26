@@ -22,7 +22,9 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			  .attr('id', 'legendSVG')
 			  .attr('height',this.svgHeight)
 			  .attr('preserveAspectRatio', 'xMidYMid meet')
-			d3.select('#legendSVG').append('g').attr('id', 'legendGroup').attr('transform','translate(0,10)')
+			d3.select('#legendSVG').append('g').attr('id', 'legendGroup').attr('transform','translate(0,0)')
+
+			app.vents.on('parCoorAxisDragged', this.updateLegend, this)
 			this.render()
 		},
 
@@ -68,20 +70,29 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 	        d3.select('#legendGroup').append('text')
 	             .attr('y',_this.legendHeight)
 	             .attr('x',_this.legendWidth)
+	             .attr('id', 'bottomLabel')
 	             .text((_this.colorPalette.domain()[0]).toFixed(3));
 
 	        d3.select('#legendGroup').append('text')
 	             .attr('y', _this.legendHeight * 0.02)
 	             .attr('x',_this.legendWidth)
+	             .attr('id', 'topLabel')
 	             .text((_this.colorPalette.domain()[1]).toFixed(3));
 
 	        d3.select('#legendGroup').append('text')
 	             .attr('y', ((_this.legendHeight)+(_this.legendHeight*0.02)) / 2)
 	             .attr('x',_this.legendWidth)
+	             .attr('id', 'middleLabel')
 	             .text(((_this.colorPalette.domain()[0] + _this.colorPalette.domain()[1]) / 2).toFixed(3));
 
 	        return this;
-		}
+		},
+
+		updateLegend: function(e){
+			d3.select('#bottomLabel').text(e.axisDomain[0].toFixed(3))
+			d3.select('#topLabel').text(e.axisDomain[1].toFixed(3))
+			d3.select('#middleLabel').text(((e.axisDomain[0]+e.axisDomain[1])/2).toFixed(3))
+		},
 
 	});
 

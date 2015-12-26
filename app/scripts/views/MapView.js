@@ -12,10 +12,8 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			this.maxColor = options.options.maxColor
 			this.minColor = options.options.minColor
 			this.sortBy = options.options.sortBy
-			// this.maxColor = "#F23A46";
-			// this.minColor = "#8EA6E8";
-			// this.sortBy = 'All_sa'
 			
+
 			//TODO: Add Ipad and other tablets projections.
 			// this.projection = d3.geo.albersUsa().translate([-13700, 3411]).scale(47000); //Desktop
 			// this.projection = d3.geo.albers().translate([-11375, 2830]).scale(38900);	//iPhone5
@@ -56,7 +54,9 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			app.vents.on('pointHovered', this.inflateRegion, this)
 			app.vents.on('pointHoverEnded', this.deflateReagion, this)
 			app.vents.on('parCoorAxisChange', this.recolorMap, this)
+			app.vents.on('parCoorSelectionDone', this.selectMultiplePaths, this)
 			this.render()
+
 
 
 
@@ -219,13 +219,18 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 				else
 					return _this.colorPalette(0);
 		});
+	},
 
-
-
-		
-		
-
+	selectMultiplePaths: function(e){
+		var _this = this;
+		d3.select('#mapLayer').selectAll('path')
+		  .classed('active', function(d){
+		  	if (e.selectedPaths.indexOf(d.properties.BoroCT2010) == -1)
+		  		return false;
+		  	return true;
+		  });
 	}
+
 
 });
 

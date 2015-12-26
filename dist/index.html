@@ -1,94 +1,117 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>D311</title>
+  <head>
+  	<title>D311</title>
 
-	<meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="scripts/vendor/bootstrap/dist/css/bootstrap.css" />
-	<link rel="stylesheet" href="scripts/styles/styles.css" />
-</head>
-<body>
+  	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" href="scripts/vendor/bootstrap/dist/css/bootstrap.css" />
+  	<link rel="stylesheet" href="scripts/styles/styles.css" />
+  </head>
+  <body>
 
-<nav class="navbar navbar-inverse col-md-12 col-sm-12 col-sm-12">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">D311</a>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">D311</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <!-- <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li> -->
+          <!-- <li><a href="#">Link</a></li> -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Matrix <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <!-- <li><a href="#">Action</a></li>
+              <li role="separator" class="divider"></li>-->
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Graph <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <!-- <li><a href="#">Action</a></li>-->
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Regions <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <!-- <li><a href="#">Action</a></li>-->
+            </ul>
+          </li>
+        </ul>
+        
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">About</a></li>
+          <!-- <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#">Separated link</a></li>
+            </ul>
+          </li> -->
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+
+    <div class="container-fluid">
+
+      <div id="legendContainer" class="col-md-1 col-sm-1 col-xs-2">
+      </div>
+
+    	<div id="mapContainer" class="col-md-4 col-sm-5 col-xs-10">
+    	</div>
+
+    	<div id="splomContainer" class="col-md-5 col-sm-6 col-xs-12">
+    	</div>
+
+    	<div id="instructionsContainer" class="col-md-2 col-sm-12 col-xs-12">
+        <div class="instructionsHeader">
+          Instructions
+        </div>
+        <div class="instructionsContent">
+          <p> 
+            Resilience in the event of weather extremes is a critical factor in community safety and in the design, operations, and maintenance of infrastructure systems. Given the increasing occurrences of extreme climate events, agencies are being challenged with weather hazards such as storm surges and heavy precipitation induced. 
+            </p>
+            <p>
+                In this web-based interactive visualization, the areas most vulnerable to flooding are identified using flood-related NYC311 call records from January 2010 to November 2015. The outline of each area is defined by census tract subdivisions. 
+            </p>
+            <p>
+                The graph at the bottom ("Parallel Coordinates") shows different characteristics that may influence either flooding in the region or tendency to register a complaint with NYC311 about flooding. By adjusting the ranges of the parameters of the characteristic(s) that you are interested in studying (such as number of flood-related calls, socioeconomic factors, and basic hydrology), the related areas on the map will be highlighted. 
+            </p>
+            <p>
+                Scroll over any highlighted area to see and compare specific characteristics of that region on the right (“Matrix of Scatter Plot"). Alternatively, you can click on any given region to see its characteristics. You may compare multiple regimes by holding Command button (Ctrl in Windows) and clicking on them. 
+            </p>
+            <p>
+                You can choose which characteristics to compare from the menu bar at the top (Matrix for "Matrix of Scatter Plot" and Graph for "Parallel Coordinates").
+            </p>
+        </div>
+    	</div>
+
+      <div id="parCoorContainer" class="col-md-12 col-sm-12 col-xs-12">
+      </div>
+
     </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <!-- <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li> -->
-        <!-- <li><a href="#">Link</a></li> -->
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Graph <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
-          </ul>
-        </li>
-      </ul>
-      <form class="navbar-form navbar-left" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
-        </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Link</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-
-
-<div class="container-fluid">
-
-  <div id="legendContainer" class="col-md-1 col-sm-1 col-xs-2">
-  </div>
-
-	<div id="mapContainer" class="col-md-4 col-sm-5 col-xs-10">
-	</div>
-
-	<div id="splomContainer" class="col-md-4 col-sm-6 col-xs-12">
-	</div>
-
-	<div id="instructionsContainer" class="col-md-3 col-sm-12 col-xs-12">
-  <h1>Instructions</h1>
-	</div>
-
-  <div id="parCoorContainer" class="col-md-12 col-sm-12 col-xs-12">
-  </div>
-
-</div>
-
-  <script data-main="scripts/main.js" src="scripts/vendor/requirejs/require.js"></script>
+    <script data-main="scripts/main.js" src="scripts/vendor/requirejs/require.js"></script>
 
 
 
-</body>
+  </body>
 </html>

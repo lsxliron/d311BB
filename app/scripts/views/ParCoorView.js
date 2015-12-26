@@ -1,4 +1,4 @@
-define(['underscore', 'backbone', 'jquery', 'd3'], function(_, Backbone, $, d3){
+define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, Backbone, $, d3, aux){
 	var ParCoorView = Backbone.View.extend({
 		tagname: 'g',
 
@@ -16,6 +16,8 @@ define(['underscore', 'backbone', 'jquery', 'd3'], function(_, Backbone, $, d3){
 			this.dimensions = [];
 			this.colorPalette = null;
 			this.graphGroup = null;
+			this.foreground = null;
+			this.backgroun = null;
 
 
 
@@ -41,6 +43,8 @@ define(['underscore', 'backbone', 'jquery', 'd3'], function(_, Backbone, $, d3){
 
 			this.svg = d3.select('#parCoorSVG')
 
+
+			app.vents.on('pathIsSelected', this.updateParCoor, this);
 
 		    this.render()
 		},
@@ -110,6 +114,10 @@ define(['underscore', 'backbone', 'jquery', 'd3'], function(_, Backbone, $, d3){
 	  						  	  	_this.background.attr('d', function(d){ return _this.path(d) })
 					  	  				.transition().delay(500).duration(0).attr('visibility', null);
 							  	  	_this.colorByFirstAxis()
+
+							  	  	var axisDomain = d3.extent(_this.points, function(p){return p[d]})
+
+							  	  	app.vents.trigger('parCoorAxisDragged', {axisDomain:axisDomain})
 							  	}));
 			//Put axis
 			_this.graphGroup.append('g')
@@ -118,6 +126,7 @@ define(['underscore', 'backbone', 'jquery', 'd3'], function(_, Backbone, $, d3){
 						d3.select(this).call(_this.axis.scale(_this.y[d]).tickSize(5)); 
 					})
 					.append('text')
+					.attr('class', 'parCoorAxis')
 					.style('text-anchor', 'start')
 					.attr('y', 0)
 					.attr('dy', 0)
@@ -125,8 +134,28 @@ define(['underscore', 'backbone', 'jquery', 'd3'], function(_, Backbone, $, d3){
 						return _this.fieldsObj[d] 
 					});
 
-			
+			d3.selectAll('.parCoorAxis').call(function(d){
+				// _this.wrap(d, _this.x.rangeBand())
+				aux.wrap(d, _this.x.rangeBand())
+			})
+
+
 			_this.colorByFirstAxis(d3.select('#parCoorRoot').selectAll('text')[0])
+
+
+			//Put brushes
+			_this.graphGroup.append('g')
+						.attr('class', 'brush')
+						.each(function(d){
+							d3.select(this)
+							  .call(_this.y[d].brush = d3.svg.brush().y(_this.y[d])
+							  					         .on('brushstart', function(){ return _this.brushstart() })
+							  					         .on('brush', function(){ return _this.brush(_this) })
+							  							 .on('brushend', function(){return _this.brushend(_this)})
+
+						//})
+						)})
+						.selectAll('rect').attr('x',-8).attr('width', 16)
 
 
 
@@ -191,7 +220,6 @@ define(['underscore', 'backbone', 'jquery', 'd3'], function(_, Backbone, $, d3){
 
 
 			_this.setColorPaletteWithKey(minKey)
-			// map.drawMap(_this.map.dataFilePath, _this.map.minColor, _this.map.maxColor, minKey);
 			d3.select('.foreground').selectAll('path').style('stroke', function(d){return _this.colorPalette(d[minKey])})
 			app.vents.trigger('parCoorAxisChange', {axis: minKey})
 
@@ -200,6 +228,90 @@ define(['underscore', 'backbone', 'jquery', 'd3'], function(_, Backbone, $, d3){
 		transition: function(g){
 			return this.graphGroup.transition().duration(500);
 		},
+
+		brushstart: function(){
+			try{
+				d3.event.sourceEvent.stopPropagation();
+			}
+			catch(err){
+				console.log("");
+			}
+		},
+
+		brush: function(context){
+			var _this = context;
+			var actives = _this.dimensions.filter(function(p){ return !_this.y[p].brush.empty(); });
+			var extents = actives.map(function(p){ return _this.y[p].brush.extent() });
+			_this.foreground.style('display', function(d){
+				return actives.every(function(p, i){
+					if(extents[i][0] <= d[p] && d[p] <= extents[i][1]){
+						d.selected=true
+						return true;
+					}
+					else{
+						d.selected=false;
+						return false;
+					}
+
+
+				}) ? null:'none';
+			});
+			
+			if (actives.length == 0){
+				$.each(_this.points, function(i, d){d.selected=true});
+
+			}
+		},
+
+		brushend: function(context){
+			var _this = context;
+			var selectedPaths = [];
+			var selectedPathsData = _this.points.filter(function(d){return d.selected == true})
+			$.each(selectedPathsData, function(i, d){ selectedPaths.push(d.BoroCT2010.toString()) })
+			app.vents.trigger('parCoorSelectionDone', {selectedPaths:selectedPaths})
+			app.vents.trigger('pathIsSelected', {selectedPaths:selectedPaths})
+
+		},
+
+		//Updates parallel coordinates after region selection on map.
+		updateParCoor: function(e){
+			d3.select('.foreground').selectAll('path')
+			.style('display', function(d){
+				if (e.selectedPaths.indexOf(d.BoroCT2010.toString()) != -1)
+					return null;
+				return 'none';
+			})
+		},
+
+
+	// /*
+	// * Wrap the labels of the graph
+	// * @param {string} text - The text to wrap.
+	// * @param {Number} width - The desired text width.
+	// */
+	// wrap: function(text, width) {
+	// 	text.each(function() {
+	// 		var text = d3.select(this),
+	//         words = text.text().split(/\s+/).reverse(),
+	//         word,
+	//         line = [],
+	//         lineNumber = 0,
+	//         lineHeight = 1.1, // ems
+	//         y = text.attr("y"),
+	//         dy = parseFloat(text.attr("dy")),
+	//         tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+	// 	    while (word = words.pop()) {
+	// 			line.push(word);
+	// 			tspan.text(line.join(" "));
+	// 			if (tspan.node().getComputedTextLength() > width) {
+	// 				line.pop();
+	// 				tspan.text(line.join(" "));
+	// 				line = [word];
+	// 				tspan = text.append("tspan").attr("x", 1).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+	// 			}
+	// 	    }
+	// 	});
+	// },
 
 	});	//END VIEW
 

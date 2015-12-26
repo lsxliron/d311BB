@@ -1,6 +1,8 @@
 $pathFillColor: #00FF00
 $splomFill: #565D56
 $selectedPathFill : #3CB371
+
+
 #mapContainer
 	// height:70%;
 	// padding-right:5px;
@@ -19,8 +21,24 @@ $selectedPathFill : #3CB371
 
 
 #instructionsContainer
-	// background-color: yellow
-	// height:70%;
+	height: 100%
+	right: 20px
+	
+
+.instructionsHeader
+	font: 28px sans-serif bold
+
+.instructionsContent
+	margin-top: 5px
+	position: absolute
+	overflow: scroll
+	height: 100%
+	
+	@media screen and (min-width: 800px)		
+		height: 310px	
+		
+
+
 
 
 // #legendContainer
@@ -106,3 +124,7 @@ circle
 svg 
 	font: 10px sans-serif
 	padding: 10px
+
+rect.extent
+	fill: #333333
+	opacity: 0.8

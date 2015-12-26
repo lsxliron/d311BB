@@ -1,4 +1,4 @@
-define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
+define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, aux){
 
 	var SplomView = Backbone.View.extend({
 
@@ -98,10 +98,16 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 								return "translate(" + (n - d.i - 1) * _this.size + "," + d.j * _this.size + ")"; 
 							})
 							.each(function(d){
-						  		if (d.i!=d.j)
+						  		if (d.i!=d.j){
 								  	_this.plotScatter(this, d, _this.domainByComplaints);
-							  	else
+						  		}
+
+							  	else{
+							  		console.log(d)
 							  		_this.plotHist(this, d, 10);
+							  		d3.select(this).append('text').text(d.x).attr('transform','translate(' + (_this.size * (d.i + 1) + 10) + ',' + _this.size/2 + ')')
+							  		d3.select(this).append('text').text(d.y).attr('transform','translate(' + _this.size/2 + ',' + (_this.size * -(d.i)) + ')')
+							  	}
 							});
 
 			return this;
@@ -220,9 +226,10 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 		},
 
 		deflatePoints: function(e){
+			var _this = this;
 			var pointsClass = '.Pt' + e.id;
 			d3.select('#splomSVG').selectAll(pointsClass).transition().duration(100)
-			.attr('r', this.pointRadius)
+			.attr('r', _this.pointRadius)
 			.style('fill', '#565D56')
 			.attr('opacity', 1)
 		},
@@ -265,11 +272,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 					// Plot new points
 					d3.select(this).selectAll('circle').data(selectedPathsData)
 					.enter().append('circle')
-					//TODO: Add mouse events
-					// .on('mouseover', function(d){_this.magnifyPointMapToSplom(d)})
-					// .on('mouseenter', function(d){ _this.magnifyPointMapToSplomIn(d); })
-					// .on('mouseout', function(d){ _this.magnifyPointMapToSplomOut(d); })
-					
+										
 					.attr('cx', function(d){ 
 						return _this.x(parseFloat(d[p.x])); 
 					})
@@ -296,6 +299,8 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 				    			  .attr('r', _this.pointRadius) 
 				    	});
 					});
+					d3.select(this).selectAll('circle').data(selectedPathsData).exit().remove()
+
 				}
 				//update Histogram
 				else{
@@ -440,7 +445,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 
 
 
-		},
+	},
 
 
 

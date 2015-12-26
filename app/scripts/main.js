@@ -1,4 +1,5 @@
 require.config({
+
 	paths: {
 		"jquery": "vendor/jquery/dist/jquery",
 		"underscore": "vendor/underscore/underscore",
@@ -6,13 +7,20 @@ require.config({
 		"d3": "vendor/d3/d3",
 		"bootstrap": "vendor/bootstrap/dist/js/bootstrap",
 		"path": "models/Path",
-		"datapoint": "models/DataPoint"
+		"datapoint": "models/DataPoint",
+		"auxFunctions": "aux/aux"
+	},
+
+	shim: {
+		"bootstrap" : { "deps" :['jquery'] }
 	}
 });
 
 
 //Main function
-require(['underscore',
+require(['jquery', 
+	     'bootstrap',
+	     'underscore',
 		 'path',
 	     'datapoint',
 	     'collections/DataPoints',
@@ -20,9 +28,10 @@ require(['underscore',
 	     'views/MapView',
 	     'views/LegendView',
 	     'views/SplomView',
-	     'views/ParCoorView'], 
-	     function(_, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView, ParCoorView){
-
+	     'views/ParCoorView',
+	     'auxFunctions'], 
+	     function($, bootstrap, _, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView, ParCoorView,aux){
+	
 	window.app = {};
 	app.vents = _.extend({}, Backbone.Events);
 	app.helpers = {};
