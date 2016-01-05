@@ -6,6 +6,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 
 
 		initialize: function(options){
+			var _this = this;
 			this.points = options.options.points
 			this.svgHeight = screen.height*.5;
 			this.svgWidth = $('#mapContainer').width();
@@ -25,6 +26,14 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			this.colorPalette = d3.scale.linear()
 						          .domain(this.getDomain())
 						          .range([this.minColor, this.maxColor]);
+
+			this.scale0 = 1;
+			this.zoom = d3.behavior.zoom()
+						  // .translate([_this.svgWidth/2, _this.svgHeight/2])
+						  .translate([0, 0])
+						  .scale(_this.scale0)
+						  .scaleExtent([_this.scale0, 8*_this.scale0])
+						  .on("zoom", function(){return _this.zoomed(_this)})
 
 			//Listen if meta key clicked
 			$(document).keydown(function(e){
@@ -48,6 +57,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			
 			d3.select('#mapSVG').append('g').attr('id','pathMagnifier')
 			d3.select('#mapSVG').append('g').attr('id', 'mapLayer')
+			d3.select('#mapSVG').call(this.zoom).call(this.zoom.event)
 
 
 			app.vents.on('pathClicked', this.selectPath, this)
@@ -218,22 +228,29 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 				  	return _this.colorPalette(currentPath[0][sortByParam])
 				else
 					return _this.colorPalette(0);
-		});
-	},
+			});
+		},
 
-	selectMultiplePaths: function(e){
-		var _this = this;
-		d3.select('#mapLayer').selectAll('path')
-		  .classed('active', function(d){
-		  	if (e.selectedPaths.indexOf(d.properties.BoroCT2010) == -1)
-		  		return false;
-		  	return true;
-		  });
-	}
+		selectMultiplePaths: function(e){
+			var _this = this;
+			d3.select('#mapLayer').selectAll('path')
+			  .classed('active', function(d){
+			  	if (e.selectedPaths.indexOf(d.properties.BoroCT2010) == -1)
+			  		return false;
+			  	return true;
+			  });
+		},
+
+		zoomed: function(context){
+			var _this = context;
+			var t = _this.zoom.translate()[0].toString() + ',' + _this.zoom.translate()[1].toString()
+			d3.select('#mapLayer').attr("transform", "translate(" + t + ")scale(" + _this.zoom.scale() + ")");
+			console.log(_this.zoom.translate())
+		}
 
 
-});
+	});
 
-	// new MapView({model:new Map()});
+	
 	return MapView;
 });
