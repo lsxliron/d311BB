@@ -30,7 +30,7 @@ require(['jquery',
 	     'views/SplomView',
 	     'views/ParCoorView',
 	     'auxFunctions'], 
-	     function($, bootstrap, _, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView, ParCoorView,aux){
+	     function($, bootstrap, _, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView, ParCoorView, aux){
 	
 	window.app = {};
 	app.vents = _.extend({}, Backbone.Events);
@@ -101,7 +101,7 @@ require(['jquery',
 	    	points: dataPoints.toJSON()
 	    };
 
-
+	    aux.init()
 		mv = new MapView({model: map, options: mapViewOptions})
 		lv = new LegendView({options: legendViewOptions})
 	    sv = new SplomView({options: splomViewOptions})

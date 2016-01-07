@@ -65,6 +65,8 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			app.vents.on('pointHoverEnded', this.deflateReagion, this)
 			app.vents.on('parCoorAxisChange', this.recolorMap, this)
 			app.vents.on('parCoorSelectionDone', this.selectMultiplePaths, this)
+			app.vents.on('clearMap', this.clearMap, this)
+			app.vents.on('boroughSelected', this.selectBorough, this)
 			this.render()
 
 
@@ -91,6 +93,22 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			  	else
 			  		return _this.colorPalette(_this.colorPalette.domain()[0]);
 			  })
+
+			  .attr('class', function(){
+			  	if (this.id[2]=='1')
+			  		return "MT"
+			  	else if (this.id[2] == '2')
+			  		return "BX"
+			  	else if (this.id[2] == '3')
+			  		return 'BK'
+			  	else if (this.id[2] == '4')
+			  		return 'QU'
+			  	else if (this.id[2] == '5')
+			  		return 'SI'
+			  	else
+			  		return null
+			  })
+			  .classed('active', true)
 
 			  //Set event listeners
 			  .on('click', function(){
@@ -159,6 +177,16 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 
 			app.vents.trigger('pathIsSelected', {id: e.id ,selectedPaths: selectedPaths})
 
+		},
+
+		selectBorough: function(e){
+			var _this = this;
+			// console.log(e.selectedPaths)
+			$.each(e.selectedPaths, function(i, d){
+				d3.select('#mapLayer').select('#Pa' + d).classed('active', true)
+			});
+
+			app.vents.trigger('pathIsSelected', {selectedPaths: e.selectedPaths})
 		},
 
 
@@ -245,7 +273,10 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			var _this = context;
 			var t = _this.zoom.translate()[0].toString() + ',' + _this.zoom.translate()[1].toString()
 			d3.select('#mapLayer').attr("transform", "translate(" + t + ")scale(" + _this.zoom.scale() + ")");
-			console.log(_this.zoom.translate())
+		},
+
+		clearMap: function(){
+			d3.select('#mapLayer').selectAll('path').classed('active', false);
 		}
 
 

@@ -30,8 +30,26 @@ define(['d3','jquery'], function(d3,$){
 			});
 		},
 
+		updateSelectedBoroughs: function(){
+			var selectedBoroughs = [];
+			var selectedPaths = []
+			$.each($('#regionsDropdown > ul > li > input[type="checkbox"]'), function(i, d){
+				if (d.checked)
+					selectedBoroughs.push('.' + d.id.slice(0,2))
+			});
+			app.vents.trigger('clearMap');
+			$.each(selectedBoroughs, function(i, d){
+				d3.selectAll(d).each(function(d){
+					selectedPaths.push(d.properties.BoroCT2010.toString())
+				})
 
+			})
+			app.vents.trigger('boroughSelected', {selectedPaths: selectedPaths})
+		},
 
-		
+		init: function(){
+			var _this = this;
+			$('#applyBoroughs').on('click', function(){ return _this.updateSelectedBoroughs() })
+		}
 	}
 })
