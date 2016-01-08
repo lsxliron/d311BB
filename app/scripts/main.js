@@ -36,6 +36,8 @@ require(['jquery',
 	app.vents = _.extend({}, Backbone.Events);
 	app.helpers = {};
 
+	var fieldNames = aux.loadDataFieldNames();
+
 	paths = [];
 		$.ajax({
 			dataType:'json', 
@@ -73,6 +75,7 @@ require(['jquery',
 
 	    var splomViewOptions = {
 	      fields: ['All_sa', 'Pop', 'Flow'],
+	      fieldNames: fieldNames,
 	      numOfBins: 10,
 	      pointRadius: 2,
 	      yNumOfTicks: 4,
@@ -81,19 +84,13 @@ require(['jquery',
 	      points: dataPoints.toJSON()
 	    };
 
-	    var parCoorFields = {
-	    	"All_sa":"Sewer Complaints",
-			"All311":"Sewer Comp. N_311.",
-			"All_DEP":"Sewer Comp. N_DEP.",
-			"R":"Rainfall Correlation",
-			"Elevation":"Elevation (ft)",
-			"Slope":"Slope",
-			"Flow":"Flow Accumulation",
-			"Race_White":"White Race (%)",
-			"Race_Black":"African American (%)",
-	    };
+
+	  var parCoorFields = ["All_sa", "All311", "All_DEP", "Pop", "Elevation", "Slope", "Flow", "Race_White", "Race_Black"]
+	    
+
 	    var parCoorOptions = {
 	    	fields: parCoorFields,
+	    	fieldNames: fieldNames,
 	    	width: $('#parCoorContainer').width(),
 	    	height: screen.width * .1,
 	    	minColor: '#8EA6E8',

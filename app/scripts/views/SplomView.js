@@ -9,6 +9,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 		initialize: function(options){
 			this.points = options.options.points;
 			this.fields = options.options.fields;
+			this.fieldNames = options.options.fieldNames
 			this.pointRadius = options.options.pointRadius;
 			this.padding = 19.5
 			this.size = 120
@@ -40,6 +41,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 			app.vents.on('pathIsSelected', this.updateSplom, this);
 			app.vents.on('pointHovered', this.inflatePoints, this);
 			app.vents.on('pointHoverEnded', this.deflatePoints, this);
+			app.vents.on('updateSplomFields', this.generateNewSplom, this);
 			this.render();
 		},
 
@@ -61,9 +63,9 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 			_this.yAxis.tickSize(-_this.size * n);
 
 			//Sets the SVG size
-			_this.svgSplom = _this.svgSplom.attr('width', _this.size * n + _this.padding + 80)
+			_this.svgSplom = d3.select('#splomSVG').attr('width', _this.size * n + _this.padding + 80)
 		 	     		          .attr('height', _this.size * n + _this.padding + 10)
-						 		  .append('g')
+						 		  .append('g').attr('id', 'splomRoot')
 							 	  .attr("transform", "translate(" + (_this.padding+10)+"," + ((_this.padding / 2)) + ")");
 
 			//Insert x axis
@@ -103,12 +105,28 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 						  		}
 
 							  	else{
-							  		console.log(d)
 							  		_this.plotHist(this, d, 10);
-							  		d3.select(this).append('text').text(d.x).attr('transform','translate(' + (_this.size * (d.i + 1) + 10) + ',' + _this.size/2 + ')')
-							  		d3.select(this).append('text').text(d.y).attr('transform','translate(' + _this.size/2 + ',' + (_this.size * -(d.i)) + ')')
+
+							  		//Y axis labels
+							  		d3.select(this).append('text')
+							  		  .attr('class', 'splomCellTitle')
+							  		  .style('text-anchor', 'start')
+							  		  .attr('y',0)
+							  		  .attr('dy',0)
+							  		  .text(_this.fieldNames[d.x]).attr('transform','translate(' + (_this.size * (d.i + 1) + 1) + ',' + _this.size/2 + ')')
+							  		
+							  		d3.select(this).append('text')
+							  		  .attr('class', 'splomCellTitle')
+							  		  .style('text-anchor', 'middle')
+							  		  .attr('y',0)
+							  		  .attr('dy',0)
+							  		  .text(_this.fieldNames[d.y]).attr('transform','translate(' + _this.size/2 + ',' + (_this.size * -(d.i) - 20 ) + ')')
 							  	}
 							});
+
+			d3.selectAll('.splomCellTitle').call(function(d){
+				aux.wrap(d, 0)
+			})
 
 			return this;
 		},//END RENDER
@@ -401,56 +419,55 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 		
 				for (var n=0; n<3; n++){
 		
-				if (n != m){
-					key = n + ',' + m;
-				if (allDomains[key][0] < tempYDomain[0])
-					tempYDomain[0] = allDomains[key][0];
+					if (n != m){
+						key = n + ',' + m;
+					if (allDomains[key][0] < tempYDomain[0])
+						tempYDomain[0] = allDomains[key][0];
 
-				if (allDomains[key][1] > tempYDomain[1])
-					tempYDomain[1] = allDomains[key][1];
+					if (allDomains[key][1] > tempYDomain[1])
+						tempYDomain[1] = allDomains[key][1];
+					}
 				}
+				yDomains.push(tempYDomain);
 			}
-			yDomains.push(tempYDomain);
-		}
 
-		//Scale the graph
-		var cells = d3.selectAll('.cell').data(_this.cross(_this.complaints,_this.complaints));
-		
-		cells.filter(function(q){return q.i != q.j}).each(function (p){
-		
-			//Scale the axes
-			_this.y.domain(yDomains[p.j]);
-			_this.x.domain(xDomains[p.i]);
+			//Scale the graph
+			var cells = d3.selectAll('.cell').data(_this.cross(_this.complaints,_this.complaints));
 			
-			// Get the axis to redraw
-			var tempYaxis = d3.selectAll('.y.axis')[0][p.j];
-			var tempXaxis = d3.selectAll('.x.axis')[0][p.i];
+			cells.filter(function(q){return q.i != q.j}).each(function (p){
 			
-			// Redraw the axes
-			d3.select(tempYaxis).call(_this.yAxis);
-			d3.select(tempXaxis).call(_this.xAxis);
-			
+				//Scale the axes
+				_this.y.domain(yDomains[p.j]);
+				_this.x.domain(xDomains[p.i]);
+				
+				// Get the axis to redraw
+				var tempYaxis = d3.selectAll('.y.axis')[0][p.j];
+				var tempXaxis = d3.selectAll('.x.axis')[0][p.i];
+				
+				// Redraw the axes
+				d3.select(tempYaxis).call(_this.yAxis);
+				d3.select(tempXaxis).call(_this.xAxis);
+				
 
-			// Redraw the points with the new scale
-			d3.select(this).selectAll('circle').data(pointsData)
-				.transition()
-				.duration(500)
-				.attr('cy', function (d){ return _this.y(d[p.y]); })
-				.attr('cx', function (d){ return _this.x(d[p.x]); })
-				.attr('class', function(d){return 'Pt'+d.BoroCT2010})
-				.attr('r', _this.pointRadius)
-	});
+				// Redraw the points with the new scale
+				d3.select(this).selectAll('circle').data(pointsData)
+					.transition()
+					.duration(500)
+					.attr('cy', function (d){ return _this.y(d[p.y]); })
+					.attr('cx', function (d){ return _this.x(d[p.x]); })
+					.attr('class', function(d){return 'Pt'+d.BoroCT2010})
+					.attr('r', _this.pointRadius)
+			});
+		},
 
+		generateNewSplom: function(e){
+			var _this = this;
+			_this.fields = e.fields;
 
+			d3.selectAll('#splomSVG').selectAll('*').remove();
+			_this.render()
 
-
-
-	},
-
-
-
-
-
+		},
 	})//END VIEW
 
 	return SplomView;

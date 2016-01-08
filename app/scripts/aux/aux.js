@@ -49,7 +49,54 @@ define(['d3','jquery'], function(d3,$){
 
 		init: function(){
 			var _this = this;
+			//Set select borough menu functionality
 			$('#applyBoroughs').on('click', function(){ return _this.updateSelectedBoroughs() })
+			$('#applyGraph').on('click', function(){ return _this.generateNewParCoor() })
+			$('#applyMatrix').on('click', function(){ return _this.generateNewSplom() })
+			//Load field names
+			var fieldNames = _this.loadDataFieldNames()
+
+			//Add field names to drop down menu
+			for (var key in fieldNames){
+				$('#matrixDropdown > .dropdown-menu').append('<li><input type="checkbox" id=' + key + ' /> <label>' + fieldNames[key] + '</label></li>')
+				$('#graphDropdown > .dropdown-menu').append('<li><input type="checkbox" id=' + key + ' /> <label>' + fieldNames[key] + '</label></li>')
+			}
+		},
+
+		loadDataFieldNames: function(){
+			var fieldNames = {}
+			$.ajax({
+				dataType: 'json',
+				async: false,
+				url: 'data/field_names.json',
+				success: function(data){
+					for (var key in data)
+						fieldNames[key] = data[key] 
+				}
+			})
+			return fieldNames
+		},
+
+
+		generateNewParCoor: function(){
+			var newFields = []
+			$.each($('#graphDropdown > .dropdown-menu > li > input[type="checkbox"'), function(i, d){
+				if (d.checked)
+					newFields.push(d.id)
+			});
+
+			app.vents.trigger('updateParCoorFields', {fields: newFields})
+		},
+
+		generateNewSplom: function(){
+			var newFields = []
+			$.each($('#matrixDropdown > .dropdown-menu > li > input[type="checkbox"'), function(i, d){
+				if (d.checked)
+					newFields.push(d.id)
+			});
+
+			app.vents.trigger('updateSplomFields', {fields: newFields})
+
 		}
 	}
 })

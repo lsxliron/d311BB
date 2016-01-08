@@ -6,7 +6,9 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 			_.bindAll(this, 'transition');
 			var _this = this;
 			this.fieldsObj = options.options.fields;
-			this.fields = d3.keys(this.fieldsObj);
+			// this.fields = d3.keys(this.fieldsObj);
+			this.fields = options.options.fields;
+			this.fieldNames = options.options.fieldNames;
 			this.points = options.options.points;
 			this.width = options.options.width;
 			this.height = options.options.height
@@ -36,7 +38,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 			  .append('svg').attr('id', 'parCoorSVG')
 			  .attr('width', _this.width)
 			  .attr('height', _this.height)
-			  .attr('fill','red')
+			  .attr('fill','red')	// TODO: REMOVE FILL
 			  .append('g')
 			  .attr('id', 'parCoorRoot')
 
@@ -45,6 +47,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 
 
 			app.vents.on('pathIsSelected', this.updateParCoor, this);
+			app.vents.on('updateParCoorFields', this.generateNewParCoor, this)
 
 		    this.render()
 		},
@@ -131,14 +134,13 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 					.attr('y', 0)
 					.attr('dy', 0)
 					.text(function(d){ 
-						return _this.fieldsObj[d] 
+						return _this.fieldNames[d]
+						// return _this.fieldsObj[d] 
 					});
 
 			d3.selectAll('.parCoorAxis').call(function(d){
-				// _this.wrap(d, _this.x.rangeBand())
 				aux.wrap(d, _this.x.rangeBand())
 			})
-
 
 			_this.colorByFirstAxis(d3.select('#parCoorRoot').selectAll('text')[0])
 
@@ -208,7 +210,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 
 			var minVal = 999999999;
 			var minKey;
-			var keys = d3.keys(keysObj)
+			var keys = _this.fields
 
 			$.each(keys, function(i, d){
 				if (keysObj[d] < minVal){
@@ -283,35 +285,15 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 			})
 		},
 
+		
+		generateNewParCoor: function(e){
+			var _this = this;
+			_this.fields = e.fields;
+			d3.select('#parCoorRoot').selectAll('*').remove();
+			_this.render()
 
-	// /*
-	// * Wrap the labels of the graph
-	// * @param {string} text - The text to wrap.
-	// * @param {Number} width - The desired text width.
-	// */
-	// wrap: function(text, width) {
-	// 	text.each(function() {
-	// 		var text = d3.select(this),
-	//         words = text.text().split(/\s+/).reverse(),
-	//         word,
-	//         line = [],
-	//         lineNumber = 0,
-	//         lineHeight = 1.1, // ems
-	//         y = text.attr("y"),
-	//         dy = parseFloat(text.attr("dy")),
-	//         tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-	// 	    while (word = words.pop()) {
-	// 			line.push(word);
-	// 			tspan.text(line.join(" "));
-	// 			if (tspan.node().getComputedTextLength() > width) {
-	// 				line.pop();
-	// 				tspan.text(line.join(" "));
-	// 				line = [word];
-	// 				tspan = text.append("tspan").attr("x", 1).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-	// 			}
-	// 	    }
-	// 	});
-	// },
+
+		},
 
 	});	//END VIEW
 
