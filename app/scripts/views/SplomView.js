@@ -305,7 +305,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 				    	app.vents.trigger('pointHovered', {id:d.BoroCT2010})
 				    })
 				    .on('mouseleave', function(d){
-				    	app.vents.trigger('pointHoverEnded')
+				    	app.vents.trigger('pointHoverEnded', {id:d.BoroCT2010})
 				    })
 				    .transition().duration(500)
 				    .attr('visibility', 'visible')
