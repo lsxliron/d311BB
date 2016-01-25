@@ -55,8 +55,9 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			  .attr('viewBox','0,0,' + this.svgWidth + ',' + this.svgHeight)
 			  .attr('preserveAspectRatio','xMidYMid meet')
 			
-			d3.select('#mapSVG').append('g').attr('id','pathMagnifier')
+			
 			d3.select('#mapSVG').append('g').attr('id', 'mapLayer')
+			d3.select('#mapSVG').append('g').attr('id','pathMagnifier')
 			d3.select('#mapSVG').call(this.zoom).call(this.zoom.event)
 
 
