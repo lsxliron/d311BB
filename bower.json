@@ -6,7 +6,7 @@
 		"backbone": null,
 		"underscore": null,
 		"requirejs": null,
-		"bootstrap": "3.3.6",
+		"bootstrap-sass-official": null,
 		"d3": "3.5.10"
 	}
 }

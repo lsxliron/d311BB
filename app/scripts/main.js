@@ -5,7 +5,7 @@ require.config({
 		"underscore": "vendor/underscore/underscore",
 		"backbone": "vendor/backbone/backbone",
 		"d3": "vendor/d3/d3",
-		"bootstrap": "vendor/bootstrap/dist/js/bootstrap",
+		"bootstrap": "vendor/bootstrap-sass-official/assets/javascripts/bootstrap.min",
 		"path": "models/Path",
 		"datapoint": "models/DataPoint",
 		"auxFunctions": "aux/aux"
