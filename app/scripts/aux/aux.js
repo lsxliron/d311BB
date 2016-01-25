@@ -47,6 +47,14 @@ define(['d3','jquery'], function(d3,$){
 			app.vents.trigger('boroughSelected', {selectedPaths: selectedPaths})
 		},
 
+		updateInfoPanel: function(numOfRegions, percentageRegions, population, complainPercentage){
+			$('#numOfRegions')[0].innerHTML = numOfRegions;
+			$('#regionPercentage')[0].innerHTML = percentageRegions;
+			$('#populationValue')[0].innerHTML = population;
+			$('#complaintPercentage')[0].innerHTML = complainPercentage
+
+		},
+
 		init: function(){
 			var _this = this;
 			//Set select borough menu functionality

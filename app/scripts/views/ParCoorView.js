@@ -277,12 +277,30 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 
 		//Updates parallel coordinates after region selection on map.
 		updateParCoor: function(e){
+			var _this = this;
 			d3.select('.foreground').selectAll('path')
 			.style('display', function(d){
 				if (e.selectedPaths.indexOf(d.BoroCT2010.toString()) != -1)
 					return null;
 				return 'none';
-			})
+			});
+
+			//UPDATE INFORMATION PANEL
+			var population = 0;
+			var allComplaints = 129.35;//K
+			var sumOfComplaints = 0;
+			var selectedLinesData = _this.getVisibleLines()
+			var allLines = (d3.select('#parCoorSVG')
+						 			     .select('.foreground')
+						 			     .selectAll('path')[0]).length
+			var regionPercentage = ((parseFloat(selectedLinesData.length) / parseFloat(allLines)) * 100).toFixed(2)
+			$.each(selectedLinesData, function(i, d){
+				population += d['Pop']
+				sumOfComplaints += d['All_sa']
+			});
+
+			var complainPercentage = ((parseFloat(sumOfComplaints) / parseFloat(allComplaints))*100).toFixed(2)
+			aux.updateInfoPanel(selectedLinesData.length, regionPercentage, population, complainPercentage)
 		},
 
 		
@@ -294,6 +312,14 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 
 
 		},
+
+		getVisibleLines: function(){
+			return (d3.select('#parCoorSVG')
+			   .select('.foreground')
+			   .selectAll('path')
+			   .filter(function(d){ return d3.select(this).style('display')!='none' }))
+		.data()	
+		}
 
 	});	//END VIEW
 
