@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>D311</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" type="text/css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/cayman.css">
+    <link rel="stylesheet" href="../css/prism.css">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">D311</h1>
+      <h2 class="project-tagline"></h2>
+    </section>
+    <section data-spy="scroll" data-target=".scrollspy" class="main-content">
+      <div class="row">
+        <div class="col-md-3 bs-docs-sidebar">
+          <ul id="sidebar" class="nav nav-stacked fixed">
+            <li><a href="../../index.html">Main</a></li>
+            <li><a href="../../aux/aux.js.html">aux/aux.js</a></li>
+            <li><a href="../../collections/DataPoints.js.html">collections/DataPoints.js</a></li>
+            <li><a href="../../collections/Map.js.html">collections/Map.js</a></li>
+            <li><a href="../../main.js.html">main.js</a></li>
+            <li><a href="../../models/DataPoint.js.html">models/DataPoint.js</a></li>
+            <li><a href="../../models/Path.js.html">models/Path.js</a></li>
+            <li><a href="../../views/LegendView.js.html">views/LegendView.js</a></li>
+            <li><a href="../../views/MapView.js.html">views/MapView.js</a></li>
+            <li><a href="../../views/ParCoorView.js.html">views/ParCoorView.js</a></li>
+            <li class="active"><a href="../../views/SplomView.js.html">views/SplomView.js
+                <ul class="nav nav-stacked">
+                  <li><a href="#define"><i class="alert alert-info"></i><span>define</span></a>
+                  </li>
+                </ul></a></li>
+          </ul>
+        </div>
+        <div class="col-md-9">
+          <section id="define">
+            <h1>define</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>define()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"></div>
+          <pre><code class="language-javascript">define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, aux){
+
+	var SplomView = Backbone.View.extend({
+
+
+		tagName: 'g',
+
+		//TODO: Change SPLOM size according to device
+		initialize: function(options){
+			this.points = options.options.points;
+			this.fields = options.options.fields;
+			this.fieldNames = options.options.fieldNames
+			this.pointRadius = options.options.pointRadius;
+			this.padding = 19.5
+			this.size = 120
+			this.width = 960
+			this.yNumOfTicks = options.options.yNumOfTicks
+			this.xNumOfTicks = options.options.xNumOfTicks
+			this.numberFormat = options.options.numberFormat
+			this.domainByComplaints = {};
+			this.complaints = [];
+			this.numOfBins = options.options.numOfBins;
+			this.x = d3.scale.linear().range([this.padding/2, this.size - this.padding/2]);
+			this.y = d3.scale.linear().range([this.size - this.padding/2, this.padding/2]);
+			this.xAxis = d3.svg.axis()
+						   .scale(this.x)
+						   .orient('bottom')
+						   .ticks(this.xNumOfTicks)
+						   .tickFormat(d3.format(this.numberFormat));
+
+			this.yAxis = d3.svg.axis()
+						   .scale(this.y)
+						   .orient('left')
+						   .ticks(this.yNumOfTicks)
+						   .tickFormat(d3.format(this.numberFormat));
+
+			this.svgSplom = d3.select('#splomContainer').append('svg').attr('id','splomSVG')
+			
+			app.vents.on('pathHovered', this.inflatePoints, this);
+			app.vents.on('pathHoverEnded', this.deflatePoints, this);
+			app.vents.on('pathIsSelected', this.updateSplom, this);
+			app.vents.on('pointHovered', this.inflatePoints, this);
+			app.vents.on('pointHoverEnded', this.deflatePoints, this);
+			app.vents.on('updateSplomFields', this.generateNewSplom, this);
+			this.render();
+		},
+
+		render: function(){
+			var _this = this;
+
+			this.complaints = d3.keys(_this.points[0]).filter(function(d){
+						return _this.fields.indexOf(d) != -1;
+			});
+
+			// number of dimensions
+			var n = _this.complaints.length;
+
+			_this.complaints.forEach(function(complaint){
+				_this.domainByComplaints[complaint] = d3.extent(_this.points, function(d){ return d[complaint]; });
+			});
+
+			_this.xAxis.tickSize(_this.size * n);
+			_this.yAxis.tickSize(-_this.size * n);
+
+			//Sets the SVG size
+			_this.svgSplom = d3.select('#splomSVG').attr('width', _this.size * n + _this.padding + 80)
+		 	     		          .attr('height', _this.size * n + _this.padding + 10)
+						 		  .append('g').attr('id', 'splomRoot')
+							 	  .attr(&quot;transform&quot;, &quot;translate(&quot; + (_this.padding+10)+&quot;,&quot; + ((_this.padding / 2)) + &quot;)&quot;);
+
+			//Insert x axis
+			_this.svgSplom.selectAll('.x.axis')
+				 .data(_this.complaints)
+				 .enter().append('g')
+				 .attr('class', 'x axis')
+				 .attr(&quot;transform&quot;, function(d, i) { return &quot;translate(&quot; + (n - i - 1) * _this.size + &quot;,0)&quot;; })
+				 .each(function(d){ 
+				 	    _this.x.domain(_this.domainByComplaints[d]); 
+				 	    d3.select(this).call(_this.xAxis); 
+		 	});
+
+			//Insert y axis
+			_this.svgSplom.selectAll('.y.axis')
+				 .data(_this.complaints)
+				 .enter().append('g')
+				 .attr('class', 'y axis')
+				 .attr(&quot;transform&quot;, function(d, i) { return &quot;translate(0,&quot; + i * _this.size + &quot;)&quot;; })
+				 .each(function(d){ 
+			 	    _this.y.domain(_this.domainByComplaints[d]); 
+			 	    d3.select(this).call(_this.yAxis); 
+		 	});
+
+
+			//Creates cells for the matrix
+			var cell = _this.svgSplom.selectAll('.cell')
+		    			    .data(_this.cross(_this.complaints, _this.complaints))
+						    .enter().append('g')
+							.attr('class', 'cell')
+							.attr(&quot;transform&quot;, function(d) { 
+								return &quot;translate(&quot; + (n - d.i - 1) * _this.size + &quot;,&quot; + d.j * _this.size + &quot;)&quot;; 
+							})
+							.each(function(d){
+						  		if (d.i!=d.j){
+								  	_this.plotScatter(this, d, _this.domainByComplaints);
+						  		}
+
+							  	else{
+							  		_this.plotHist(this, d, 10);
+
+							  		//Y axis labels
+							  		d3.select(this).append('text')
+							  		  .attr('class', 'splomCellTitle')
+							  		  .style('text-anchor', 'start')
+							  		  .attr('y',0)
+							  		  .attr('dy',0)
+							  		  .text(_this.fieldNames[d.x]).attr('transform','translate(' + (_this.size * (d.i + 1) + 1) + ',' + _this.size/2 + ')')
+							  		
+							  		d3.select(this).append('text')
+							  		  .attr('class', 'splomCellTitle')
+							  		  .style('text-anchor', 'middle')
+							  		  .attr('y',0)
+							  		  .attr('dy',0)
+							  		  .text(_this.fieldNames[d.y]).attr('transform','translate(' + _this.size/2 + ',' + (_this.size * -(d.i) - 20 ) + ')')
+							  	}
+							});
+
+			d3.selectAll('.splomCellTitle').call(function(d){
+				aux.wrap(d, 0)
+			})
+
+			return this;
+		},//END RENDER
+
+
+
+		plotScatter:function(cellElement, p){
+			var _this = this;
+	    
+			var cell = d3.select(cellElement);
+			_this.x.domain(_this.domainByComplaints[p.x]);
+			_this.y.domain(_this.domainByComplaints[p.y]);
+			// _this.pointsData = _this.getCurrentPointsData();
+			
+
+			cell.append('rect')
+			    .attr('class', 'frame')
+			    .attr('x', _this.padding/2)
+			    .attr('y', _this.padding/2)
+			    .attr('width', _this.size - _this.padding/2)
+			    .attr('height', _this.size - _this.padding/2);
+
+			cell.selectAll('circle')
+		        .data(_this.points)
+			    .enter()
+			    .append('circle')
+		    	.attr('cx', function(d){ 
+			    	return _this.x(d[p.x]); 
+			    })
+			    .attr('cy', function(d){ 
+			    	return _this.y(d[p.y]); 
+			    })
+			    .attr('r', _this.pointRadius)
+			    .attr('opacity', 0.5)
+			    .attr('class', function(d){ return 'Pt' + d.BoroCT2010; })
+			    .attr('visibility', 'visible')
+			    .on('mouseenter', function(d){
+			    	app.vents.trigger('pointHovered', {id:this.classList[0].slice(2)})
+			    })
+			    .on('mouseleave', function(d){
+			    	app.vents.trigger('pointHoverEnded', {id:this.classList[0].slice(2)})
+			    })
+		    
+			    // .on('mouseenter', function(d){ _this.magnifyPointMapToSplomIn(d); })
+			    // .on('mouseout', function(d){ _this.magnifyPointMapToSplomOut(d); });
+
+		},
+
+		plotHist: function(cellElement, p, numOfBins){
+			var _this = this;
+			
+			var numOfBins = 10;
+			
+			var cell = d3.select(cellElement);
+			_this.x.domain(_this.domainByComplaints[p.x]);
+			_this.y.domain(_this.domainByComplaints[p.y]);
+		
+
+			cell.append('rect')
+			    .attr('class', 'frame')
+			    .attr('x', _this.padding/2)
+			    .attr('y', _this.padding/2)
+			    .attr('width', _this.size - _this.padding/2)
+			    .attr('height', _this.size - _this.padding/2);
+
+			var values=[];
+		
+
+			_this.points.forEach(function(d){ values.push(d[p.x]); });
+
+			_this.histData = d3.layout.histogram()
+				 			   .bins(numOfBins)
+							    (values);
+
+			_this.histY = d3.scale.linear()
+				 .domain([0, d3.max(_this.histData, function(d){ return d.y; })])
+				 .range([_this.size - _this.padding/2, _this.padding/2]);
+
+
+			var bar = cell.selectAll('.bar')
+						  .data(_this.histData)
+						  .enter().append('g')
+						  .attr('class', 'bar')
+						  .attr(&quot;transform&quot;, function(d) { 
+						  	return &quot;translate(&quot; + _this.x(d.x) + &quot;,&quot; + _this.histY(d.y) + &quot;)&quot;; 
+						});
+
+			bar.append('rect')
+			   .attr('x', 1)
+			   .attr('width', (_this.size - _this.padding/2)/(numOfBins * 1.7))
+			   .attr('height', function(d){ return _this.size - _this.histY(d.y); });	    	
+		},
+
+
+		cross: function(a,b){
+			var c = [];
+			var n = a.length;
+			var m = b.length;
+			var i;
+			var j;
+
+			for (i=-1; ++i&lt;n;)
+				for (j=-1; ++j&lt;m;)
+					c.push({x:a[i], i:i, y:b[j], j:j});
+			return c;
+		},
+
+		inflatePoints: function(e){
+			var pointsClass = '.Pt' + e.id;
+			d3.select('#splomSVG').selectAll(pointsClass).transition().duration(100)
+			.attr('r', 10)
+			.attr('opacity', 0.5)
+			.style('fill','#FF0000')
+
+		},
+
+		deflatePoints: function(e){
+			var _this = this;
+			var pointsClass = '.Pt' + e.id;
+			d3.select('#splomSVG').selectAll(pointsClass).transition().duration(100)
+			.attr('r', _this.pointRadius)
+			.style('fill', '#565D56')
+			.attr('opacity', 1)
+		},
+
+		updateSplom: function(e){
+			var _this = this;
+
+			//Get selected path data
+			var selectedPaths = e.selectedPaths;
+			var selectedPathsData = this.points.filter(function(d){
+				if (selectedPaths.indexOf(d.BoroCT2010.toString()) != -1)
+					return d;
+			});
+
+			//Remove all points from SPLOM if only one region is selected
+			if (selectedPathsData.length == 1){
+					d3.selectAll('#splomContainer').selectAll('circle').remove();
+			}
+
+			var cell = d3.selectAll('.cell');
+			var c = cell.data(_this.cross(_this.complaints, _this.complaints)).each(function(p){
+				if (p.i != p.j){
+					//Set axes domains
+					var xDomain = d3.extent(selectedPathsData, function(d){ return d[p.x]; })
+					var yDomain = d3.extent(selectedPathsData, function(d){ return d[p.y]; })
+					
+					if (xDomain[0]==xDomain[1])
+						xDomain[0]=0
+					
+					if (yDomain[0]==yDomain[1])
+						yDomain[0] = 0
+
+					_this.x.domain(xDomain)
+					d3.select('.x.axis').call(_this.xAxis)
+				
+				
+					_this.y.domain(yDomain)				
+					d3.select('.y.axis').call(_this.yAxis)
+
+					// Plot new points
+					d3.select(this).selectAll('circle').data(selectedPathsData)
+					.enter().append('circle')
+										
+					.attr('cx', function(d){ 
+						return _this.x(parseFloat(d[p.x])); 
+					})
+				    .attr('cy', function(d){ 
+				    	return _this.y(parseFloat(d[p.y])); 
+				    })
+				    .attr('class', function(d){
+				    	return 'Pt'+ d.BoroCT2010;
+				    })
+				    .attr('r', 0)
+				    .on('mouseenter', function(d){
+				    	app.vents.trigger('pointHovered', {id:d.BoroCT2010})
+				    })
+				    .on('mouseleave', function(d){
+				    	app.vents.trigger('pointHoverEnded', {id:d.BoroCT2010})
+				    })
+				    .transition().duration(500)
+				    .attr('visibility', 'visible')
+				    .each('end', function(){
+				    	d3.select(this).transition().duration(500)
+	    				  .attr('r', 5)
+				          .each('end', function(){
+				    	  		d3.select(this).transition().duration(500)
+				    			  .attr('r', _this.pointRadius) 
+				    	});
+					});
+					d3.select(this).selectAll('circle').data(selectedPathsData).exit().remove()
+
+				}
+				//update Histogram
+				else{
+					_this.updateHist(this, p, selectedPaths)
+				}
+			}).call(function(){
+				if (e.selectedPaths.length&gt;1)
+					_this.scaleGraph(e)
+			});
+		},
+
+		updateHist: function(cellElement, p, selectedPaths){
+			var _this = this;
+			var values = [];
+
+			var pointsData = _this.points.filter(function(d){
+				if (selectedPaths.indexOf(d.BoroCT2010.toString()) != -1)
+					return d;
+			});
+
+			pointsData.forEach(function(d){ values.push(d[p.x]); });
+
+			_this.complaints.forEach(function(complaint){
+				_this.domainByComplaints[complaint] = d3.extent(pointsData, function(d){ return d[complaint]; });
+			});
+
+			_this.y.domain(_this.domainByComplaints[p.y]);
+			_this.x.domain(d3.extent(values));
+			_this.histData = d3.layout.histogram()
+							   .bins(_this.numOfBins)
+							   (values);
+
+			_this.histY.domain([0, d3.max(_this.histData, function(d){ return d.y; })]);
+
+			var bar = d3.select(cellElement).selectAll('.bar')
+						.data(_this.histData)
+						.transition().duration(1000)
+						.attr(&quot;transform&quot;, function(d) { 
+							var xTrans = _this.x(d.x) ? _this.x(d.x) : 0;
+							return &quot;translate(&quot; + xTrans + &quot;,&quot; + _this.histY(d.y) + &quot;)&quot;; 		  	 	
+			});
+
+			d3.select(cellElement).selectAll('.bar rect').data(_this.histData)
+			  .attr('y', 0)	//for animation
+			  .transition().duration(1000)
+			  .attr('width', (_this.size - _this.padding/2)/17)
+			  .attr('height', function(d){ 
+			  		if(d.y==0){ return 0; }; return _this.size - _this.histY(d.y);
+			  });
+
+		},
+
+		scaleGraph: function(e){
+			var _this = this;
+			var allDomains = {};
+			var allXDomains = {};
+			var yDomains = [];
+			var xDomains = [];
+
+			
+			var pointsData = _this.points.filter(function(d){
+				if ((e.selectedPaths).indexOf(d.BoroCT2010.toString()) != -1)
+					return d;
+			});
+
+			$.each(_this.cross(_this.complaints, _this.complaints), function(i, p){
+
+				//Get Y axis domain
+				var tempDomain = d3.extent(pointsData, function (d){ return d[p.y]; })
+				allDomains[p.i + ',' + p.j] = tempDomain
+				
+				//Get X axis domain
+				tempDomain = d3.extent(pointsData, function (d){ return d[p.x]; });
+					allXDomains[p.i + ',' + p.j] = tempDomain;
+			});
+
+			//Find X axis domain
+			for (var m=0; m&lt;3; m++){
+				var tempXDomain=[999,0];
+				for (var n=0; n&lt;3; n++){
+					if (n != m){
+						key = m + ',' + n
+					
+					if (allXDomains[key][0] &lt; tempXDomain[0])
+						tempXDomain[0] = allXDomains[key][0];
+
+					if (allXDomains[key][1] &gt; tempXDomain[1])
+						tempXDomain[1] = allXDomains[key][1];
+					}
+				}
+				xDomains.push(tempXDomain);
+			}
+
+			//Find Y axis domain
+			for (var m=0; m&lt;3; m++){
+		
+				var tempYDomain = [999,0];
+		
+				for (var n=0; n&lt;3; n++){
+		
+					if (n != m){
+						key = n + ',' + m;
+					if (allDomains[key][0] &lt; tempYDomain[0])
+						tempYDomain[0] = allDomains[key][0];
+
+					if (allDomains[key][1] &gt; tempYDomain[1])
+						tempYDomain[1] = allDomains[key][1];
+					}
+				}
+				yDomains.push(tempYDomain);
+			}
+
+			//Scale the graph
+			var cells = d3.selectAll('.cell').data(_this.cross(_this.complaints,_this.complaints));
+			
+			cells.filter(function(q){return q.i != q.j}).each(function (p){
+			
+				//Scale the axes
+				_this.y.domain(yDomains[p.j]);
+				_this.x.domain(xDomains[p.i]);
+				
+				// Get the axis to redraw
+				var tempYaxis = d3.selectAll('.y.axis')[0][p.j];
+				var tempXaxis = d3.selectAll('.x.axis')[0][p.i];
+				
+				// Redraw the axes
+				d3.select(tempYaxis).call(_this.yAxis);
+				d3.select(tempXaxis).call(_this.xAxis);
+				
+
+				// Redraw the points with the new scale
+				d3.select(this).selectAll('circle').data(pointsData)
+					.transition()
+					.duration(500)
+					.attr('cy', function (d){ return _this.y(d[p.y]); })
+					.attr('cx', function (d){ return _this.x(d[p.x]); })
+					.attr('class', function(d){return 'Pt'+d.BoroCT2010})
+					.attr('r', _this.pointRadius)
+			});
+		},
+
+		generateNewSplom: function(e){
+			var _this = this;
+			_this.fields = e.fields;
+
+			d3.selectAll('#splomSVG').selectAll('*').remove();
+			_this.render()
+
+		},
+	})//END VIEW
+
+	return SplomView;
+
+
+
+});</code></pre>
+          <div class="footer site-footer">
+            <div class="span site-footer-owner"><a href="https://github.com/iwatakeshi/doxx-theme-cayman">Cayman</a> is maintained by <a href="https://github.com/iwatakeshi">iwatakeshi</a>.</div>
+            <div class="span site-footer-credits">This page was generated by <a href="https://github.com/FGRibreau/doxx">Doxx</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/affix.js"></script>
+    <script src="../js/dropdown.js"></script>
+    <script src="../js/scrollspy.js"></script>
+    <script src="../js/prism.js"></script>
+    <script src="../js/prism-bash.js"></script>
+    <script>
+      $(document).ready(function(){
+        $('body').scrollspy({
+          target: ".bs-docs-sidebar",
+          offset: 40
+        }) 
+      });
+    </script>
+  </body>
+</html>

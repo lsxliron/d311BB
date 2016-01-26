@@ -47,7 +47,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 
 
 			
-			
+			//Create the SVG and the group layers
 			d3.select('#mapContainer').append('svg')
 			  .attr('id','mapSVG')
 			  .attr('height', this.svgHeight+'px')
@@ -127,18 +127,19 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			  return _this;
 		},
 
+
+		// Returns the domain of the current variable (dimension)
 		getDomain: function(){
 			var _this = this;
 			var maxVal = d3.max(this.points, function(d){ return d[_this.sortBy] })
 			var minVal = d3.min(this.points, function(d){ return d[_this.sortBy] })
 			return [minVal, maxVal]
-			// return [0,1]
 		},
 
+
+		// Selectes a single region. The event {e} contains the id of 
+		// the desired region
 		selectPath: function(e){
-
-
-
 			var pathId = '#Pa'+e.id;
 
 			var isActive = !d3.select(pathId).classed('active')
@@ -180,9 +181,9 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 
 		},
 
+		// Selects a complete borough
 		selectBorough: function(e){
 			var _this = this;
-			// console.log(e.selectedPaths)
 			$.each(e.selectedPaths, function(i, d){
 				d3.select('#mapLayer').select('#Pa' + d).classed('active', true)
 			});
@@ -191,7 +192,8 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 		},
 
 
-
+		// Inflates a region that corresponds to a point on the splom when the user
+		// hovers on the point
 		inflateRegion: function(e){
 			var pathId = '#Pa' + e.id
 			var currentPathData = d3.select(pathId).attr('d');
@@ -199,9 +201,6 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			var zoomScale = 8;
 			var pathOrigColor = d3.select(pathId).attr('fill')
 			
-
-
-			// d3.select('#pathMagnifier').selectAll('path').remove()
 
 			d3.select('#pathMagnifier').append('path')
 			  .attr('d', currentPathData)
@@ -237,10 +236,12 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 
 		},
 
+		// animate hovered image after inflating
 		deflateReagion: function(e){
 			d3.select('#pathMagnifier').selectAll('path').remove()
 		},
 
+		//Recoloring the map according to the left most axis of the parcoor
 		recolorMap: function(e){
 			var _this = this;
 			var sortByParam = e.axis;
@@ -260,6 +261,8 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			});
 		},
 
+		// Marks multiple paths on the map as selected
+		// when the user holds the command/shift button
 		selectMultiplePaths: function(e){
 			var _this = this;
 			d3.select('#mapLayer').selectAll('path')
@@ -270,12 +273,14 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			  });
 		},
 
+		//Zoom helper function
 		zoomed: function(context){
 			var _this = context;
 			var t = _this.zoom.translate()[0].toString() + ',' + _this.zoom.translate()[1].toString()
 			d3.select('#mapLayer').attr("transform", "translate(" + t + ")scale(" + _this.zoom.scale() + ")");
 		},
 
+		// Deselects all the regions in the map
 		clearMap: function(){
 			d3.select('#mapLayer').selectAll('path').classed('active', false);
 		}

@@ -88,7 +88,15 @@ require(['jquery',
 	    };
 
 
-	  var parCoorFields = ["All_sa", "All311", "All_DEP", "Pop", "Elevation", "Slope", "Flow", "Race_White", "Race_Black"]
+	  var parCoorFields = ["All_sa", 
+	  					   "All311", 
+	  					   "All_DEP", 
+	  					   "Pop", 
+	  					   "Elevation", 
+	  					   "Slope", 
+	  					   "Flow", 
+	  					   "Race_White", 
+	  					   "Race_Black"];
 	    
 
 	    var parCoorOptions = {

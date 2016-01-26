@@ -30,6 +30,10 @@ define(['d3','jquery', 'pnotify'], function(d3, $, PNotify){
 			});
 		},
 
+		/*
+		* Updates the map, splom and parcoor when the user selectes
+		* a borugh from the region list in the navbar.
+		*/
 		updateSelectedBoroughs: function(){
 			var selectedBoroughs = [];
 			var selectedPaths = []
@@ -47,6 +51,13 @@ define(['d3','jquery', 'pnotify'], function(d3, $, PNotify){
 			app.vents.trigger('boroughSelected', {selectedPaths: selectedPaths})
 		},
 
+		/*
+		* Updates the information panel on the bottom of the page.
+		* @param {Number} numOfRegions - The total number of regions in the map,
+		* @param {Number} precentageRegions - The percentage of the selected regions.
+		* @param {Number} population - The total number of population.
+		* @param {number} complainPercentage - The percentage of complaints in the selected regions.
+		*/
 		updateInfoPanel: function(numOfRegions, percentageRegions, population, complainPercentage){
 			$('#numOfRegions')[0].innerHTML = numOfRegions;
 			$('#regionPercentage')[0].innerHTML = percentageRegions;
@@ -55,14 +66,17 @@ define(['d3','jquery', 'pnotify'], function(d3, $, PNotify){
 
 		},
 
+
+		/*
+		* Initialize the navbar and menus.
+		* @param {Array} fieldNames - an array of strings which contains all the variable names.
+		*/
 		init: function(fieldNames){
 			var _this = this;
 			//Set select borough menu functionality
 			$('#applyBoroughs').on('click', function(){ return _this.updateSelectedBoroughs() })
 			$('#applyGraph').on('click', function(){ return _this.generateNewParCoor() })
 			$('#applyMatrix').on('click', function(){ return _this.generateNewSplom() })
-			//Load field names
-			// var fieldNames = _this.loadDataFieldNames()
 
 			//Add field names to drop down menu
 			for (var key in fieldNames){
@@ -71,6 +85,10 @@ define(['d3','jquery', 'pnotify'], function(d3, $, PNotify){
 			}
 		},
 
+		/*
+		* Load the file which contains the variable names.
+		* @return {Array} An array which variables names.
+		*/
 		loadDataFieldNames: function(){
 			var fieldNames = {}
 			$.ajax({
@@ -86,6 +104,10 @@ define(['d3','jquery', 'pnotify'], function(d3, $, PNotify){
 		},
 
 
+		/*
+		* Generates a new parallel coordinates graph with the variables
+		* the user selected in the navbar dropdown.
+		*/
 		generateNewParCoor: function(){
 			var newFields = []
 			$.each($('#graphDropdown > .dropdown-menu > li > input[type="checkbox"'), function(i, d){
@@ -108,6 +130,11 @@ define(['d3','jquery', 'pnotify'], function(d3, $, PNotify){
 				app.vents.trigger('updateParCoorFields', {fields: newFields})
 		},
 
+
+		/*
+		* Generates a new matrix of scatter plot with the variables
+		* the user selected in the navbar dropdown.
+		*/
 		generateNewSplom: function(){
 			var newFields = []
 			$.each($('#matrixDropdown > .dropdown-menu > li > input[type="checkbox"'), function(i, d){

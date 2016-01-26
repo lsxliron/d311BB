@@ -5,7 +5,6 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 
 		tagName: 'g',
 
-		//TODO: Change SPLOM size according to device
 		initialize: function(options){
 			this.points = options.options.points;
 			this.fields = options.options.fields;
@@ -132,7 +131,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 		},//END RENDER
 
 
-
+		// Plot the scatter plots portion of the matrix
 		plotScatter:function(cellElement, p){
 			var _this = this;
 	    
@@ -168,13 +167,10 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 			    })
 			    .on('mouseleave', function(d){
 			    	app.vents.trigger('pointHoverEnded', {id:this.classList[0].slice(2)})
-			    })
-		    
-			    // .on('mouseenter', function(d){ _this.magnifyPointMapToSplomIn(d); })
-			    // .on('mouseout', function(d){ _this.magnifyPointMapToSplomOut(d); });
-
+			    });
 		},
 
+		//Plot the histogram portion of the matrix
 		plotHist: function(cellElement, p, numOfBins){
 			var _this = this;
 			
@@ -221,6 +217,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 		},
 
 
+		// Return a cross product of a and b {arrays}
 		cross: function(a,b){
 			var c = [];
 			var n = a.length;
@@ -234,6 +231,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 			return c;
 		},
 
+		// Infaltes a point when the user hovers on the corresponding region
 		inflatePoints: function(e){
 			var pointsClass = '.Pt' + e.id;
 			d3.select('#splomSVG').selectAll(pointsClass).transition().duration(100)
@@ -242,7 +240,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 			.style('fill','#FF0000')
 
 		},
-
+		// Deflates a point when the user hovers on the corresponding region
 		deflatePoints: function(e){
 			var _this = this;
 			var pointsClass = '.Pt' + e.id;
@@ -252,6 +250,8 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 			.attr('opacity', 1)
 		},
 
+		// Update the splom according to the user selection. e.id is a point to add
+		// or remove
 		updateSplom: function(e){
 			var _this = this;
 
@@ -330,6 +330,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 			});
 		},
 
+		//Updates the histograms according to the selected regions
 		updateHist: function(cellElement, p, selectedPaths){
 			var _this = this;
 			var values = [];
@@ -371,6 +372,7 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 
 		},
 
+		//Scale the graph after every selection to match axes to the domain 
 		scaleGraph: function(e){
 			var _this = this;
 			var allDomains = {};
@@ -460,6 +462,8 @@ define(['backbone', 'jquery', 'd3', 'auxFunctions'], function(Backbone, $, d3, a
 			});
 		},
 
+
+		// Generates a new splom after user changes variables in the navbar
 		generateNewSplom: function(e){
 			var _this = this;
 			_this.fields = e.fields;

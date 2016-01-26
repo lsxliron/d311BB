@@ -28,6 +28,10 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 			this.render()
 		},
 
+		/*
+		* Returns the domain of the current dataset (one dimension)
+		* @return {Array} The min and max values ([min, max]).
+		*/
 		getDomain: function(){
 			var _this = this;
 			var maxVal = d3.max(this.points, function(d){ return d[_this.sortBy] });
@@ -37,6 +41,8 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 
 		render: function(){
 			var _this = this;
+
+			//Define colors
 			var gradient = d3.select('#legendGroup').append("defs")
 						        .append('linearGradient')
 						        .attr('id', 'gradient')
@@ -57,7 +63,7 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 	                .attr('stop-opacity', '1');
 
 
-
+	        // Add legend
 	        d3.select('#legendGroup').append('rect')
 	             .attr('x', _this.legendWidth * 0.01)
 	             .attr('y', 0)
@@ -65,6 +71,8 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 	             .attr('height', _this.legendHeight)
 	             .style('fill', 'url(#gradient)');
 
+	        
+	        // Create legend ticks
 	        d3.select('#legendGroup').selectAll('text').remove()
 	        
 	        d3.select('#legendGroup').append('text')
@@ -88,12 +96,15 @@ define(['backbone', 'jquery', 'd3'], function(Backbone, $, d3){
 	        return this;
 		},
 
+		/*
+		* Updates the text of the legend ticks
+		* @param {Event} e - A click event with an array which contains the data domain
+		*/
 		updateLegend: function(e){
 			d3.select('#bottomLabel').text(e.axisDomain[0].toFixed(3))
 			d3.select('#topLabel').text(e.axisDomain[1].toFixed(3))
 			d3.select('#middleLabel').text(((e.axisDomain[0]+e.axisDomain[1])/2).toFixed(3))
 		},
-
 	});
 
 	return LegendView;

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>D311</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/cayman.css">
+    <link rel="stylesheet" href="css/prism.css">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">D311</h1>
+      <h2 class="project-tagline"></h2>
+    </section>
+    <section data-spy="scroll" data-target=".scrollspy" class="main-content">
+      <div class="row">
+        <div class="col-md-3 bs-docs-sidebar">
+          <ul id="sidebar" class="nav nav-stacked fixed">
+            <li><a href="index.html">Main</a></li>
+            <li class="active"><a href="aux.js.html">aux.js
+                <ul class="nav nav-stacked">
+                  <li><a href="#wrap"><i class="alert alert-info"></i><span>wrap</span></a>
+                  </li>
+                  <li><a href="#updateSelectedBoroughs"><i class="alert alert-info"></i><span>updateSelectedBoroughs</span></a>
+                  </li>
+                  <li><a href="#updateInfoPanel"><i class="alert alert-info"></i><span>updateInfoPanel</span></a>
+                  </li>
+                  <li><a href="#init"><i class="alert alert-info"></i><span>init</span></a>
+                  </li>
+                  <li><a href="#loadDataFieldNames"><i class="alert alert-info"></i><span>loadDataFieldNames</span></a>
+                  </li>
+                  <li><a href="#generateNewParCoor"><i class="alert alert-info"></i><span>generateNewParCoor</span></a>
+                  </li>
+                  <li><a href="#generateNewSplom"><i class="alert alert-info"></i><span>generateNewSplom</span></a>
+                  </li>
+                </ul></a></li>
+          </ul>
+        </div>
+        <div class="col-md-9">
+          <section id="wrap">
+            <h1>wrap</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>wrap()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>text</td>
+                <td>string</td>
+                <td><ul>
+<li>The text to wrap.</li>
+</ul>
+</td>
+              </tr>
+              <tr>
+                <td>width</td>
+                <td>Number</td>
+                <td><ul>
+<li>The desired text width.</li>
+</ul>
+</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Wrap the labels of the graph</p></div>
+          <pre><code class="language-javascript">wrap: function(text, width) {
+	text.each(function() {
+		var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr(&quot;y&quot;),
+        dy = parseFloat(text.attr(&quot;dy&quot;)),
+        tspan = text.text(null).append(&quot;tspan&quot;).attr(&quot;x&quot;, 0).attr(&quot;y&quot;, y).attr(&quot;dy&quot;, dy + &quot;em&quot;);
+	    while (word = words.pop()) {
+			line.push(word);
+			tspan.text(line.join(&quot; &quot;));
+			if (tspan.node().getComputedTextLength() &gt; width) {
+				line.pop();
+				tspan.text(line.join(&quot; &quot;));
+				line = [word];
+				tspan = text.append(&quot;tspan&quot;).attr(&quot;x&quot;, 1).attr(&quot;y&quot;, y).attr(&quot;dy&quot;, ++lineNumber * lineHeight + dy + &quot;em&quot;).text(word);
+			}
+	    }
+	});
+},</code></pre>
+          <section id="updateSelectedBoroughs">
+            <h1>updateSelectedBoroughs</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>updateSelectedBoroughs()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>Updates the map, splom and parcoor when the user selectes<br />a borugh from the region list in the navbar.</p></div>
+          <pre><code class="language-javascript">updateSelectedBoroughs: function(){
+	var selectedBoroughs = [];
+	var selectedPaths = []
+	$.each($('#regionsDropdown &gt; ul &gt; li &gt; input[type=&quot;checkbox&quot;]'), function(i, d){
+		if (d.checked)
+			selectedBoroughs.push('.' + d.id.slice(0,2))
+	});
+	app.vents.trigger('clearMap');
+	$.each(selectedBoroughs, function(i, d){
+		d3.selectAll(d).each(function(d){
+			selectedPaths.push(d.properties.BoroCT2010.toString())
+		})
+
+	})
+	app.vents.trigger('boroughSelected', {selectedPaths: selectedPaths})
+},</code></pre>
+          <section id="updateInfoPanel">
+            <h1>updateInfoPanel</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>updateInfoPanel()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>numOfRegions</td>
+                <td>Number</td>
+                <td><ul>
+<li>The total number of regions in the map,</li>
+</ul>
+</td>
+              </tr>
+              <tr>
+                <td>precentageRegions</td>
+                <td>Number</td>
+                <td><ul>
+<li>The percentage of the selected regions.</li>
+</ul>
+</td>
+              </tr>
+              <tr>
+                <td>population</td>
+                <td>Number</td>
+                <td><ul>
+<li>The total number of population.</li>
+</ul>
+</td>
+              </tr>
+              <tr>
+                <td>complainPercentage</td>
+                <td>number</td>
+                <td><ul>
+<li>The percentage of complaints in the selected regions.</li>
+</ul>
+</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Updates the information panel on the bottom of the page.</p></div>
+          <pre><code class="language-javascript">updateInfoPanel: function(numOfRegions, percentageRegions, population, complainPercentage){
+	$('#numOfRegions')[0].innerHTML = numOfRegions;
+	$('#regionPercentage')[0].innerHTML = percentageRegions;
+	$('#populationValue')[0].innerHTML = population;
+	$('#complaintPercentage')[0].innerHTML = complainPercentage
+
+},</code></pre>
+          <section id="init">
+            <h1>init</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>init()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>fieldNames</td>
+                <td>Array</td>
+                <td><ul>
+<li>an array of strings which contains all the variable names.</li>
+</ul>
+</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Initialize the navbar and menus.</p></div>
+          <pre><code class="language-javascript">init: function(fieldNames){
+	var _this = this;
+	//Set select borough menu functionality
+	$('#applyBoroughs').on('click', function(){ return _this.updateSelectedBoroughs() })
+	$('#applyGraph').on('click', function(){ return _this.generateNewParCoor() })
+	$('#applyMatrix').on('click', function(){ return _this.generateNewSplom() })
+
+	//Add field names to drop down menu
+	for (var key in fieldNames){
+		$('#matrixDropdown &gt; .dropdown-menu').append('&lt;li&gt;&lt;input type=&quot;checkbox&quot; id=' + key + ' /&gt; &lt;label&gt;' + fieldNames[key] + '&lt;/label&gt;&lt;/li&gt;')
+		$('#graphDropdown &gt; .dropdown-menu').append('&lt;li&gt;&lt;input type=&quot;checkbox&quot; id=' + key + ' /&gt; &lt;label&gt;' + fieldNames[key] + '&lt;/label&gt;&lt;/li&gt;')
+	}
+},</code></pre>
+          <section id="loadDataFieldNames">
+            <h1>loadDataFieldNames</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>loadDataFieldNames()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>Load the file which contains the variable names.</p></div>
+          <pre><code class="language-javascript">loadDataFieldNames: function(){
+	var fieldNames = {}
+	$.ajax({
+		dataType: 'json',
+		async: false,
+		url: 'data/field_names.json',
+		success: function(data){
+			for (var key in data)
+				fieldNames[key] = data[key] 
+		}
+	})
+	return fieldNames
+},</code></pre>
+          <section id="generateNewParCoor">
+            <h1>generateNewParCoor</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>generateNewParCoor()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>Generates a new parallel coordinates graph with the variables<br />the user selected in the navbar dropdown.</p></div>
+          <pre><code class="language-javascript">generateNewParCoor: function(){
+	var newFields = []
+	$.each($('#graphDropdown &gt; .dropdown-menu &gt; li &gt; input[type=&quot;checkbox&quot;'), function(i, d){
+		if (d.checked)
+			newFields.push(d.id)
+	});
+	if ((newFields.length &lt; 2) || (newFields.length &gt;10)){
+		new PNotify({
+			title: 'Too many fields selected!',
+			text: 'Please choose up to 10 fields',
+			type: 'error',
+			animate_speed: &quot;slow&quot;,
+			animation: &quot;fade&quot;,
+			delay: 3000,
+			shadow: true,
+			mouse_reset:true
+		});
+	}
+	else
+		app.vents.trigger('updateParCoorFields', {fields: newFields})
+},</code></pre>
+          <section id="generateNewSplom">
+            <h1>generateNewSplom</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>&nbsp;</span><span>generateNewSplom()</span><span>&nbsp;</span>
+            </p>
+          </section>
+          <div class="description"><p>Generates a new matrix of scatter plot with the variables<br />the user selected in the navbar dropdown.</p></div>
+          <pre><code class="language-javascript">generateNewSplom: function(){
+	var newFields = []
+	$.each($('#matrixDropdown &gt; .dropdown-menu &gt; li &gt; input[type=&quot;checkbox&quot;'), function(i, d){
+		if (d.checked)
+			newFields.push(d.id)
+	});
+
+	if (newFields.length != 3){
+		new PNotify({
+			title: 'Too many fields selected!',
+			text: 'Please exactly 3 fields',
+			type: 'error',
+			animate_speed: &quot;slow&quot;,
+			animation: &quot;fade&quot;,
+			delay: 3000,
+			shadow: true,
+			mouse_reset:true
+		});
+	}
+	else
+		app.vents.trigger('updateSplomFields', {fields: newFields})
+
+}
+	}
+})</code></pre>
+          <div class="footer site-footer">
+            <div class="span site-footer-owner"><a href="https://github.com/iwatakeshi/doxx-theme-cayman">Cayman</a> is maintained by <a href="https://github.com/iwatakeshi">iwatakeshi</a>.</div>
+            <div class="span site-footer-credits">This page was generated by <a href="https://github.com/FGRibreau/doxx">Doxx</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/affix.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="js/scrollspy.js"></script>
+    <script src="js/prism.js"></script>
+    <script src="js/prism-bash.js"></script>
+    <script>
+      $(document).ready(function(){
+        $('body').scrollspy({
+          target: ".bs-docs-sidebar",
+          offset: 40
+        }) 
+      });
+    </script>
+  </body>
+</html>

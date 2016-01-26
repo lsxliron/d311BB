@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>D311</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/cayman.css">
+    <link rel="stylesheet" href="css/prism.css">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">D311</h1>
+      <h2 class="project-tagline"></h2>
+    </section>
+    <section data-spy="scroll" data-target=".scrollspy" class="main-content">
+      <div class="row">
+        <div class="col-md-3 bs-docs-sidebar">
+          <ul id="sidebar" class="nav nav-stacked fixed">
+            <li><a href="../index.html">Main</a></li>
+            <li><a href="../aux/aux.js.html">aux/aux.js</a></li>
+            <li><a href="../collections/DataPoints.js.html">collections/DataPoints.js</a></li>
+            <li><a href="../collections/Map.js.html">collections/Map.js</a></li>
+            <li class="active"><a href="../main.js.html">main.js
+                <ul class="nav nav-stacked">
+                </ul></a></li>
+            <li><a href="../models/DataPoint.js.html">models/DataPoint.js</a></li>
+            <li><a href="../models/Path.js.html">models/Path.js</a></li>
+            <li><a href="../views/LegendView.js.html">views/LegendView.js</a></li>
+            <li><a href="../views/MapView.js.html">views/MapView.js</a></li>
+            <li><a href="../views/ParCoorView.js.html">views/ParCoorView.js</a></li>
+            <li><a href="../views/SplomView.js.html">views/SplomView.js</a></li>
+          </ul>
+        </div>
+        <div class="col-md-9">
+          <div class="description"></div>
+          <pre><code class="language-javascript">require.config({
+
+	paths: {
+		&quot;jquery&quot;: &quot;vendor/jquery/dist/jquery&quot;,
+		&quot;underscore&quot;: &quot;vendor/underscore/underscore&quot;,
+		&quot;backbone&quot;: &quot;vendor/backbone/backbone&quot;,
+		&quot;d3&quot;: &quot;vendor/d3/d3&quot;,
+		&quot;bootstrap&quot;: &quot;vendor/bootstrap-sass-official/assets/javascripts/bootstrap.min&quot;,
+		&quot;path&quot;: &quot;models/Path&quot;,
+		&quot;datapoint&quot;: &quot;models/DataPoint&quot;,
+		&quot;auxFunctions&quot;: &quot;aux/aux&quot;,
+		&quot;pnotify&quot;: &quot;vendor/pnotify/dist/pnotify&quot;
+	},
+
+	shim: {
+		&quot;bootstrap&quot; : { &quot;deps&quot; :['jquery'] },
+		&quot;pnotify&quot; : { &quot;deps&quot; :['jquery'] }
+	}
+});
+
+
+//Main function
+require(['jquery', 
+	     'bootstrap',
+	     'underscore',
+		 'path',
+	     'datapoint',
+	     'collections/DataPoints',
+	     'collections/Map',
+	     'views/MapView',
+	     'views/LegendView',
+	     'views/SplomView',
+	     'views/ParCoorView',
+	     'auxFunctions',
+	     'pnotify'], 
+	     function($, bootstrap, _, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView, ParCoorView, aux, PNotify){
+	
+	window.app = {};
+	app.vents = _.extend({}, Backbone.Events);
+	app.helpers = {};
+	PNotify.prototype.options.styling = &quot;bootstrap3&quot;;
+	var fieldNames = aux.loadDataFieldNames();
+
+	paths = [];
+		$.ajax({
+			dataType:'json', 
+			async: false,
+			url:'data/gj.json', 
+			success:function(data){
+				$.each(data['features'], function(i,d){
+					paths.push(new Path(d))
+				});
+			}
+		});
+
+		//Initialize Path Collection
+		var map = new Map(paths)
+
+	    
+	    //Initialize data points
+		dataPoints = new DataPoints();
+	    
+
+	    var mapViewOptions = {
+	      minColor: '#8EA6E8',
+	      maxColor: '#F23A46',
+	      sortBy: 'All_sa',
+	      points: dataPoints.toJSON()
+	    };
+
+	    var legendViewOptions = {
+	      minColor: '#8EA6E8',
+	      maxColor: '#F23A46',
+	      sortBy: 'All_sa',
+	      points: dataPoints.toJSON(),
+	      legendWidth: 30
+	    };
+
+	    var splomViewOptions = {
+	      fields: ['All_sa', 'Pop', 'Flow'],
+	      fieldNames: fieldNames,
+	      numOfBins: 10,
+	      pointRadius: 2,
+	      yNumOfTicks: 4,
+	      xNumOfTicks: 3,
+	      numberFormat: '.1f',
+	      points: dataPoints.toJSON()
+	    };
+
+
+	  var parCoorFields = [&quot;All_sa&quot;, &quot;All311&quot;, &quot;All_DEP&quot;, &quot;Pop&quot;, &quot;Elevation&quot;, &quot;Slope&quot;, &quot;Flow&quot;, &quot;Race_White&quot;, &quot;Race_Black&quot;]
+	    
+
+	    var parCoorOptions = {
+	    	fields: parCoorFields,
+	    	fieldNames: fieldNames,
+	    	width: $('#parCoorContainer').width(),
+	    	height: screen.width * .1,
+	    	minColor: '#8EA6E8',
+	        maxColor: '#F23A46',
+	    	points: dataPoints.toJSON()
+	    };
+
+	    aux.init(fieldNames)
+		mv = new MapView({model: map, options: mapViewOptions})
+		lv = new LegendView({options: legendViewOptions})
+	    sv = new SplomView({options: splomViewOptions})
+	    pc = new ParCoorView({options: parCoorOptions})
+})</code></pre>
+          <div class="footer site-footer">
+            <div class="span site-footer-owner"><a href="https://github.com/iwatakeshi/doxx-theme-cayman">Cayman</a> is maintained by <a href="https://github.com/iwatakeshi">iwatakeshi</a>.</div>
+            <div class="span site-footer-credits">This page was generated by <a href="https://github.com/FGRibreau/doxx">Doxx</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/affix.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="js/scrollspy.js"></script>
+    <script src="js/prism.js"></script>
+    <script src="js/prism-bash.js"></script>
+    <script>
+      $(document).ready(function(){
+        $('body').scrollspy({
+          target: ".bs-docs-sidebar",
+          offset: 40
+        }) 
+      });
+    </script>
+  </body>
+</html>

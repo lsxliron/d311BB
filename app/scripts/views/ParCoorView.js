@@ -6,7 +6,6 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 			_.bindAll(this, 'transition');
 			var _this = this;
 			this.fieldsObj = options.options.fields;
-			// this.fields = d3.keys(this.fieldsObj);
 			this.fields = options.options.fields;
 			this.fieldNames = options.options.fieldNames;
 			this.points = options.options.points;
@@ -166,6 +165,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 
 		},
 
+		// Helper function to draw the path
 		path: function(d){
 			var _this = this;
 
@@ -174,6 +174,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 			}));
 		},
 
+		// Set the color pallete range according to the left most axis
 		setColorPalette: function(context){
 			var _this = context;
 			_this.colorPalette = d3.scale.linear()
@@ -182,6 +183,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 			
 		},
 
+		// Setting the color pallet acoording to the given key {string}
 		setColorPaletteWithKey: function(key){
 			var _this = this;
 			var colorPalette = d3.scale.linear()
@@ -191,6 +193,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 			_this.colorPalette = colorPalette;
 		},
 
+		//Helper function for dragging the axes
 		position: function(d){
 			var _this = this;
 
@@ -199,7 +202,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 		},
 
 
-
+		// Colors the parcoor according to the left most axis
 		colorByFirstAxis:  function(){
 			var _this = this;
 			var keysObj= {}
@@ -227,6 +230,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 
 		},
 
+		//helper functions:
 		transition: function(g){
 			return this.graphGroup.transition().duration(500);
 		},
@@ -304,6 +308,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 		},
 
 		
+		// Generates a new parcoor according to the fields in the {event} e
 		generateNewParCoor: function(e){
 			var _this = this;
 			_this.fields = e.fields;
@@ -313,6 +318,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 
 		},
 
+		//Returns the data of all the visible (selected) lines
 		getVisibleLines: function(){
 			return (d3.select('#parCoorSVG')
 			   .select('.foreground')
