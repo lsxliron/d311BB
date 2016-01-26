@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   	<link rel="stylesheet" href="scripts/styles/styles.css" />
+    <!-- <link rel="stylesheet" href="scripts/vendor/pnotify/dist/pnotify.css" /> -->
   </head>
   <body>
 
@@ -60,22 +61,11 @@
         </ul>
         
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#">About</a></li>
-          <!-- <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Action</a></li>
-              <li><a href="#">Another action</a></li>
-              <li><a href="#">Something else here</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="#">Separated link</a></li>
-            </ul>
-          </li> -->
+          <li><a href="#" data-toggle="modal" data-target="#aboutModal">About</a></li>
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
-
 
     <div class="container-fluid">
 
@@ -130,7 +120,26 @@
 
     <script data-main="scripts/main.js" src="scripts/vendor/requirejs/require.js"></script>
 
+  <!-- ABOUT MODAL WINDOW -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="ariaAboutModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">About This Project</h4>
+      </div>
+      <div class="modal-body">
+        <p>Lorem ipsum dolor sit amet, an omnes graeco dolores eos. Vim cu ferri adipisci percipitur, eu fabellas electram pri. Maiorum prodesset adolescens ut eos. Nam cu lorem noster, est ridens phaedrum salutatus ex. In est diam etiam animal. Brute mandamus repudiandae sed at, quando commune definitiones in mei.</p>
 
+        <p>Alii exerci no pro, no nam appareat imperdiet. Ignota nostro cu nam, ut sed summo inimicus. Ut mollis efficiendi per, at aliquip fabulas sit. Commodo lucilius eu quo.</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   </body>
 </html>

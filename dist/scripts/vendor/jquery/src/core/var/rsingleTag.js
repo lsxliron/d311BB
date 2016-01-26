@@ -1,1 +1,1 @@
-define([],function(){return/^<(\w+)\s*\/?>(?:<\/\1>|)$/});
+define([],function(){return/^<([\w-]+)\s*\/?>(?:<\/\1>|)$/});

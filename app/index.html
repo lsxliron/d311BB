@@ -61,69 +61,82 @@
         </ul>
         
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#">About</a></li>
-          <!-- <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Action</a></li>
-              <li><a href="#">Another action</a></li>
-              <li><a href="#">Something else here</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="#">Separated link</a></li>
-            </ul>
-          </li> -->
+          <li><a href="#" data-toggle="modal" data-target="#aboutModal">About</a></li>
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
   </nav>
 
-
     <div class="container-fluid">
 
-      <div id="legendContainer" class="col-md-1 col-sm-1 col-xs-2">
+      <!-- INSTUCTIONS FOR TABLETS AND PHONES -->
+      <div class="col-xs-12 hidden-md hidden-lg row">
+        <div class="mobileInstructions">
+            <h3>Instructions</h3>
+            <p> 
+              Resilience in the event of weather extremes is a critical factor in community safety and in the design, operations, and maintenance of infrastructure systems. Given the increasing occurrences of extreme climate events, agencies are being challenged with weather hazards such as storm surges and heavy precipitation induced. 
+              </p>
+              <p>
+                  In this web-based interactive visualization, the areas most vulnerable to flooding are identified using flood-related NYC311 call records from January 2010 to November 2015. The outline of each area is defined by census tract subdivisions. 
+              </p>
+              <p>
+                  The graph at the bottom ("Parallel Coordinates") shows different characteristics that may influence either flooding in the region or tendency to register a complaint with NYC311 about flooding. By adjusting the ranges of the parameters of the characteristic(s) that you are interested in studying (such as number of flood-related calls, socioeconomic factors, and basic hydrology), the related areas on the map will be highlighted. 
+              </p>
+              <p>
+                  Scroll over any highlighted area to see and compare specific characteristics of that region on the right (“Matrix of Scatter Plot"). Alternatively, you can click on any given region to see its characteristics. You may compare multiple regimes by holding Command button (Ctrl in Windows) and clicking on them. 
+              </p>
+              <p>
+                  You can choose which characteristics to compare from the menu bar at the top (Matrix for "Matrix of Scatter Plot" and Graph for "Parallel Coordinates").
+              </p>
+          </div>
       </div>
 
-    	<div id="mapContainer" class="col-md-4 col-sm-5 col-xs-10">
-    	</div>
+      <div class="row">
+        <div id="legendContainer" class="col-md-1 col-sm-2 col-xs-2"></div>
 
-    	<div id="splomContainer" class="col-md-5 col-sm-6 col-xs-12">
-    	</div>
+      	<div id="mapContainer" class="col-md-4 col-xs-10"></div>
 
-    	<div id="instructionsContainer" class="col-md-2 col-sm-12 col-xs-12">
-        <div class="instructionsHeader">
-          Instructions
-        </div>
-        <div class="instructionsContent">
-          <p> 
-            Resilience in the event of weather extremes is a critical factor in community safety and in the design, operations, and maintenance of infrastructure systems. Given the increasing occurrences of extreme climate events, agencies are being challenged with weather hazards such as storm surges and heavy precipitation induced. 
-            </p>
-            <p>
-                In this web-based interactive visualization, the areas most vulnerable to flooding are identified using flood-related NYC311 call records from January 2010 to November 2015. The outline of each area is defined by census tract subdivisions. 
-            </p>
-            <p>
-                The graph at the bottom ("Parallel Coordinates") shows different characteristics that may influence either flooding in the region or tendency to register a complaint with NYC311 about flooding. By adjusting the ranges of the parameters of the characteristic(s) that you are interested in studying (such as number of flood-related calls, socioeconomic factors, and basic hydrology), the related areas on the map will be highlighted. 
-            </p>
-            <p>
-                Scroll over any highlighted area to see and compare specific characteristics of that region on the right (“Matrix of Scatter Plot"). Alternatively, you can click on any given region to see its characteristics. You may compare multiple regimes by holding Command button (Ctrl in Windows) and clicking on them. 
-            </p>
-            <p>
-                You can choose which characteristics to compare from the menu bar at the top (Matrix for "Matrix of Scatter Plot" and Graph for "Parallel Coordinates").
-            </p>
-        </div>
-    	</div>
+      	<div id="splomContainer" class="col-md-5 col-xs-12"></div>
 
-      <div id="parCoorContainer" class="col-md-12 col-sm-12 col-xs-12">
+      	<div id="instructionsContainer" class="col-md-2 hidden-xs hidden-sm"><!-- col-xs-12 -->
+          <div class="instructionsHeader">
+            Instructions
+          </div>
+          <div class="instructionsContent">
+            <p> 
+              Resilience in the event of weather extremes is a critical factor in community safety and in the design, operations, and maintenance of infrastructure systems. Given the increasing occurrences of extreme climate events, agencies are being challenged with weather hazards such as storm surges and heavy precipitation induced. 
+              </p>
+              <p>
+                  In this web-based interactive visualization, the areas most vulnerable to flooding are identified using flood-related NYC311 call records from January 2010 to November 2015. The outline of each area is defined by census tract subdivisions. 
+              </p>
+              <p>
+                  The graph at the bottom ("Parallel Coordinates") shows different characteristics that may influence either flooding in the region or tendency to register a complaint with NYC311 about flooding. By adjusting the ranges of the parameters of the characteristic(s) that you are interested in studying (such as number of flood-related calls, socioeconomic factors, and basic hydrology), the related areas on the map will be highlighted. 
+              </p>
+              <p>
+                  Scroll over any highlighted area to see and compare specific characteristics of that region on the right (“Matrix of Scatter Plot"). Alternatively, you can click on any given region to see its characteristics. You may compare multiple regimes by holding Command button (Ctrl in Windows) and clicking on them. 
+              </p>
+              <p>
+                  You can choose which characteristics to compare from the menu bar at the top (Matrix for "Matrix of Scatter Plot" and Graph for "Parallel Coordinates").
+              </p>
+          </div>
+      	</div>
       </div>
 
-      <div id="infoContainer" class="col-xs-12">
-        <div class="col-xs-4">
-          <label>Population: <span id="populationValue">8243</span>K</label>
-        </div>
-        <div class="col-xs-4">
-          <label><span id="numOfRegions">2098</span> Regions (<span id="regionPercentage">100</span>%)</label>
-        </div>
-        <div class="col-xs-4">
-          <label><span id="complaintPercentage">100</span>% complaints</label>
+      <div class="row">
+        <div id="parCoorContainer" class="col-xs-12"></div>
+      </div>
+
+      <div class="row"></div>
+        <div id="infoContainer" class="col-xs-12">
+          <div class="col-xs-4">
+            <label>Population: <span id="populationValue">8243</span>K</label>
+          </div>
+          <div class="col-xs-4">
+            <label><span id="numOfRegions">2098</span> Regions (<span id="regionPercentage">100</span>%)</label>
+          </div>
+          <div class="col-xs-4">
+            <label><span id="complaintPercentage">100</span>% complaints</label>
+          </div>
         </div>
       </div>
 
@@ -131,7 +144,26 @@
 
     <script data-main="scripts/main.js" src="scripts/vendor/requirejs/require.js"></script>
 
+  <!-- ABOUT MODAL WINDOW -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="ariaAboutModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">About This Project</h4>
+      </div>
+      <div class="modal-body">
+        <p>Lorem ipsum dolor sit amet, an omnes graeco dolores eos. Vim cu ferri adipisci percipitur, eu fabellas electram pri. Maiorum prodesset adolescens ut eos. Nam cu lorem noster, est ridens phaedrum salutatus ex. In est diam etiam animal. Brute mandamus repudiandae sed at, quando commune definitiones in mei.</p>
 
+        <p>Alii exerci no pro, no nam appareat imperdiet. Ignota nostro cu nam, ut sed summo inimicus. Ut mollis efficiendi per, at aliquip fabulas sit. Commodo lucilius eu quo.</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   </body>
 </html>
