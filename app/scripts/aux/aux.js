@@ -1,4 +1,4 @@
-define(['d3','jquery'], function(d3,$){
+define(['d3','jquery', 'pnotify'], function(d3, $, PNotify){
 	return{
 		
 		/*
@@ -55,14 +55,14 @@ define(['d3','jquery'], function(d3,$){
 
 		},
 
-		init: function(){
+		init: function(fieldNames){
 			var _this = this;
 			//Set select borough menu functionality
 			$('#applyBoroughs').on('click', function(){ return _this.updateSelectedBoroughs() })
 			$('#applyGraph').on('click', function(){ return _this.generateNewParCoor() })
 			$('#applyMatrix').on('click', function(){ return _this.generateNewSplom() })
 			//Load field names
-			var fieldNames = _this.loadDataFieldNames()
+			// var fieldNames = _this.loadDataFieldNames()
 
 			//Add field names to drop down menu
 			for (var key in fieldNames){
@@ -92,8 +92,20 @@ define(['d3','jquery'], function(d3,$){
 				if (d.checked)
 					newFields.push(d.id)
 			});
-
-			app.vents.trigger('updateParCoorFields', {fields: newFields})
+			if ((newFields.length < 2) || (newFields.length >10)){
+				new PNotify({
+					title: 'Too many fields selected!',
+					text: 'Please choose up to 10 fields',
+					type: 'error',
+					animate_speed: "slow",
+					animation: "fade",
+					delay: 3000,
+					shadow: true,
+					mouse_reset:true
+				});
+			}
+			else
+				app.vents.trigger('updateParCoorFields', {fields: newFields})
 		},
 
 		generateNewSplom: function(){
@@ -103,7 +115,20 @@ define(['d3','jquery'], function(d3,$){
 					newFields.push(d.id)
 			});
 
-			app.vents.trigger('updateSplomFields', {fields: newFields})
+			if (newFields.length != 3){
+				new PNotify({
+					title: 'Too many fields selected!',
+					text: 'Please exactly 3 fields',
+					type: 'error',
+					animate_speed: "slow",
+					animation: "fade",
+					delay: 3000,
+					shadow: true,
+					mouse_reset:true
+				});
+			}
+			else
+				app.vents.trigger('updateSplomFields', {fields: newFields})
 
 		}
 	}

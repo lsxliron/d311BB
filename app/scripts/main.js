@@ -8,11 +8,13 @@ require.config({
 		"bootstrap": "vendor/bootstrap-sass-official/assets/javascripts/bootstrap.min",
 		"path": "models/Path",
 		"datapoint": "models/DataPoint",
-		"auxFunctions": "aux/aux"
+		"auxFunctions": "aux/aux",
+		"pnotify": "vendor/pnotify/dist/pnotify"
 	},
 
 	shim: {
-		"bootstrap" : { "deps" :['jquery'] }
+		"bootstrap" : { "deps" :['jquery'] },
+		"pnotify" : { "deps" :['jquery'] }
 	}
 });
 
@@ -29,13 +31,14 @@ require(['jquery',
 	     'views/LegendView',
 	     'views/SplomView',
 	     'views/ParCoorView',
-	     'auxFunctions'], 
-	     function($, bootstrap, _, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView, ParCoorView, aux){
+	     'auxFunctions',
+	     'pnotify'], 
+	     function($, bootstrap, _, Path, DataPoint, DataPoints, Map, MapView, LegendView, SplomView, ParCoorView, aux, PNotify){
 	
 	window.app = {};
 	app.vents = _.extend({}, Backbone.Events);
 	app.helpers = {};
-
+	PNotify.prototype.options.styling = "bootstrap3";
 	var fieldNames = aux.loadDataFieldNames();
 
 	paths = [];
@@ -98,7 +101,7 @@ require(['jquery',
 	    	points: dataPoints.toJSON()
 	    };
 
-	    aux.init()
+	    aux.init(fieldNames)
 		mv = new MapView({model: map, options: mapViewOptions})
 		lv = new LegendView({options: legendViewOptions})
 	    sv = new SplomView({options: splomViewOptions})
