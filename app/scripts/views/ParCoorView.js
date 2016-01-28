@@ -14,6 +14,7 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 			this.minColor = options.options.minColor;
 			this.maxColor = options.options.maxColor;
 			this.axis = d3.svg.axis().orient('left');
+			this.sortBy = options.options.sortBy;
 			this.dimensions = [];
 			this.colorPalette = null;
 			this.graphGroup = null;
@@ -61,7 +62,12 @@ define(['underscore', 'backbone', 'jquery', 'd3', 'auxFunctions'], function(_, B
 					return +p[d]
 				}))
 				.range([_this.height, 0]))
-			}));
+			}).sort(function(a, b){
+				if (a == _this.sortBy)
+					return -1
+				return 1
+				})
+			);
 
 
 			//Prepare the background gray lines

@@ -58,20 +58,20 @@ require(['jquery',
 
 	    
 	    //Initialize data points
-		dataPoints = new DataPoints();
-	    
+		var dataPoints = new DataPoints();
+	    var sortBy = 'All_sa';
 
 	    var mapViewOptions = {
 	      minColor: '#8EA6E8',
 	      maxColor: '#F23A46',
-	      sortBy: 'All_sa',
+	      sortBy: sortBy,
 	      points: dataPoints.toJSON()
 	    };
 
 	    var legendViewOptions = {
 	      minColor: '#8EA6E8',
 	      maxColor: '#F23A46',
-	      sortBy: 'All_sa',
+	      sortBy: sortBy,
 	      points: dataPoints.toJSON(),
 	      legendWidth: 30
 	    };
@@ -106,6 +106,7 @@ require(['jquery',
 	    	height: screen.width * .1,
 	    	minColor: '#8EA6E8',
 	        maxColor: '#F23A46',
+	        sortBy: sortBy,
 	    	points: dataPoints.toJSON()
 	    };
 
